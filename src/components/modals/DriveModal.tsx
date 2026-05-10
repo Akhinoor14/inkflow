@@ -148,7 +148,7 @@ export function DriveModal({ onClose }: Props) {
                 Connect Google Drive
               </button>
               <p className="text-xs text-gray-400 mt-3">
-                Only accesses the "InkFlow Studio" folder in your Drive.
+                Only accesses the &quot;InkFlow Studio&quot; folder in your Drive.
               </p>
             </div>
           )}

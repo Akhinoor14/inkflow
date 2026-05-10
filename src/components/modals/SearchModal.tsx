@@ -138,7 +138,7 @@ export function SearchModal({ onClose }: Props) {
         <div className="max-h-96 overflow-y-auto">
           {query && results.length === 0 && (
             <div className="py-10 text-center text-gray-400">
-              <p className="text-sm">No results for "{query}"</p>
+              <p className="text-sm">No results for &quot;{query}&quot;</p>
               <p className="text-xs mt-1">Try running OCR on handwriting to make it searchable</p>
             </div>
           )}
