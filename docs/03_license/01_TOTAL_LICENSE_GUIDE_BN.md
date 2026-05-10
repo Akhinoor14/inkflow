@@ -20,7 +20,7 @@
 2. Bengali activation text + error mapping যোগ করা হয়েছে: [src/app/page.tsx](src/app/page.tsx)
 3. 20 license key generate করার script তৈরি করা হয়েছে: [scripts/generate-licenses.js](scripts/generate-licenses.js)
 4. Admin SQL snippets file তৈরি করা হয়েছে: [scripts/sql/admin-license-snippets.sql](scripts/sql/admin-license-snippets.sql)
-5. Customer-specific workflow file তৈরি করা হয়েছে: [CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md](CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md)
+5. Customer-specific workflow file তৈরি করা হয়েছে: [01_CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN](../04_customer/01_CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md)
 6. Total newborn guide files update করা হয়েছে
 
 Current example key:
@@ -387,8 +387,8 @@ Check:
 1. [src/app/page.tsx](src/app/page.tsx) - activation gate + Bengali messages
 2. [scripts/generate-licenses.js](scripts/generate-licenses.js) - 20 key generator
 3. [scripts/sql/admin-license-snippets.sql](scripts/sql/admin-license-snippets.sql) - revoke/extend/reset queries
-4. [CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md](CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md) - customer-specific guide
-5. [LICENSE_NEWBORN_GUIDE_BN.md](LICENSE_NEWBORN_GUIDE_BN.md) - simpler guide
+4. [01_CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN](../04_customer/01_CUSTOMER_LICENSE_WORKFLOW_A3KMSTUDIO_BN.md) - customer-specific guide
+5. [02_LICENSE_NEWBORN_GUIDE_BN](02_LICENSE_NEWBORN_GUIDE_BN.md) - simpler guide
 
 -----------------------------------
 

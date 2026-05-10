@@ -473,7 +473,7 @@ inkflow-studio/
 ├── .env.local.example          # Environment variable template
 ├── package.json                # Dependencies + build config
 ├── capacitor.config.json       # Android APK config
-└── DEVELOPER_GUIDE.md          # This file
+└── 03_DEVELOPER_GUIDE.md       # This file
 ```
 
 ---
@@ -549,5 +549,5 @@ function cMyTool()  { /* read inputs, showRes([{k,v}]) */ }
 | Electron desktop (.exe) config | ✅ |
 | Capacitor Android (APK) config | ✅ |
 | Service Worker (offline PWA) | ✅ |
-| USER_GUIDE.md | ✅ |
-| DEVELOPER_GUIDE.md | ✅ |
+| 02_USER_GUIDE.md | ✅ |
+| 03_DEVELOPER_GUIDE.md | ✅ |

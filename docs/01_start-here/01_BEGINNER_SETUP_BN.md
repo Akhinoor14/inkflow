@@ -209,7 +209,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 ### 5.3 database table তৈরি
 
 1. Supabase -> SQL Editor
-2. `DEVELOPER_GUIDE.md` এর License section থেকে SQL copy করো
+2. [03_DEVELOPER_GUIDE.md](03_DEVELOPER_GUIDE.md) এর License section থেকে SQL copy করো
 3. Run করো
 
 ---
