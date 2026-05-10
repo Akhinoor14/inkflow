@@ -1,0 +1,771 @@
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.wrap{font-family:var(--font-sans);color:var(--color-text-primary)}
+.hdr{padding:24px 24px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.app-name{font-size:22px;font-weight:500;display:flex;align-items:center;gap:10px}
+.sub{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.source-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.sp{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 10px;border-radius:12px;border:0.5px solid}
+.sp-g{background:#E1F5EE;color:#085041;border-color:#5DCAA5}.sp-d{background:#EEEDFE;color:#26215C;border-color:#7F77DD}
+.sp-c{background:#E6F1FB;color:#042C53;border-color:#378ADD}.sp-gpt{background:#FAEEDA;color:#412402;border-color:#EF9F27}
+@media(prefers-color-scheme:dark){
+  .sp-g{background:#04342C;color:#9FE1CB;border-color:#0F6E56}
+  .sp-d{background:#26215C;color:#CECBF6;border-color:#534AB7}
+  .sp-c{background:#042C53;color:#B5D4F4;border-color:#185FA5}
+  .sp-gpt{background:#412402;color:#FAC775;border-color:#854F0B}
+}
+.tabs{display:flex;gap:0;border-bottom:0.5px solid var(--color-border-tertiary);padding:0 24px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s;user-select:none}
+.tab.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary);font-weight:500}
+.tab:hover:not(.active){color:var(--color-text-primary)}
+.panel{display:none;padding:20px 24px}
+.panel.active{display:block}
+h3{font-size:15px;font-weight:500;margin-bottom:12px}
+h4{font-size:13px;font-weight:500;margin-bottom:6px;color:var(--color-text-primary)}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;margin-left:4px}
+.b-green{background:#EAF3DE;color:#27500A}.b-teal{background:#E1F5EE;color:#085041}.b-purple{background:#EEEDFE;color:#3C3489}.b-amber{background:#FAEEDA;color:#633806}.b-coral{background:#FAECE7;color:#993C1D}.b-blue{background:#E6F1FB;color:#0C447C}.b-gray{background:#F1EFE8;color:#444441}.b-pink{background:#FBEAF0;color:#72243E}
+@media(prefers-color-scheme:dark){
+  .b-green{background:#173404;color:#C0DD97}.b-teal{background:#04342C;color:#9FE1CB}.b-purple{background:#26215C;color:#CECBF6}.b-amber{background:#412402;color:#FAC775}.b-coral{background:#4A1B0C;color:#F5C4B3}.b-blue{background:#042C53;color:#B5D4F4}.b-gray{background:#2C2C2A;color:#D3D1C7}.b-pink{background:#4B1528;color:#F4C0D1}
+}
+.txt{font-size:13px;color:var(--color-text-secondary);line-height:1.7}
+.txt b{color:var(--color-text-primary);font-weight:500}
+.attr{display:inline-flex;gap:3px;margin-left:6px;vertical-align:middle}
+.a{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;flex-shrink:0}
+.a-g{background:#5DCAA5;color:#fff}.a-d{background:#7F77DD;color:#fff}.a-c{background:#378ADD;color:#fff}.a-gpt{background:#EF9F27;color:#fff}
+.feat-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.feat-item:last-child{border-bottom:none}
+.feat-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--color-background-secondary)}
+.feat-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.feat-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.stack-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stack-row:last-child{border-bottom:none}
+.stack-lbl{font-size:11px;color:var(--color-text-secondary);min-width:80px;padding-top:3px;font-weight:500}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;padding:3px 9px;border-radius:8px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.tag.best{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info);font-weight:500}
+.phase{border-left:2px solid var(--color-border-tertiary);padding-left:14px;margin-bottom:18px}
+.phase.p0{border-color:#888780}.phase.p1{border-color:#5DCAA5}.phase.p2{border-color:#7F77DD}.phase.p3{border-color:#EF9F27}.phase.p4{border-color:#D85A30}
+.phase-hdr{font-size:13px;font-weight:500;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.phase-body{font-size:12px;color:var(--color-text-secondary);line-height:1.9}
+.cost-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.cost-row:last-child{border-bottom:none}
+.cost-row span:first-child{color:var(--color-text-secondary)}
+.cost-row span:last-child{font-weight:500}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.mval{font-size:22px;font-weight:500}.mlbl{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.attr-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.attr-tbl th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--color-text-secondary);padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);text-align:left;background:var(--color-background-secondary)}
+.attr-tbl td{padding:7px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.attr-tbl tr:last-child td{border-bottom:none}
+.winner{background:var(--color-background-success);font-size:10px;padding:2px 6px;border-radius:6px;color:var(--color-text-success);font-weight:500;white-space:nowrap}
+.decision-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px}
+.decision-title{font-size:12px;font-weight:500;margin-bottom:4px}
+.decision-val{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.json-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px;font-family:var(--font-mono);font-size:11px;line-height:1.8;color:var(--color-text-secondary);overflow-x:auto}
+.jk{color:var(--color-text-info)}.jv{color:var(--color-text-success)}.jc{color:var(--color-text-secondary);opacity:.6}
+.alert{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-md);padding:10px 14px;font-size:12px;color:var(--color-text-warning);margin-bottom:12px}
+</style>
+
+<div class="wrap">
+<div class="hdr">
+  <div class="app-name">
+    <span style="font-size:24px">🖊</span>
+    InkFlow Studio
+    <span class="badge b-green" style="font-size:11px">Final Combined Plan</span>
+  </div>
+  <div class="sub">4টি AI-এর সেরা plan একত্রিত করে তৈরি — সম্পূর্ণ Digital Notebook Software Blueprint</div>
+  <div class="source-pills" style="margin-top:12px">
+    <span class="sp sp-g"><span class="a a-g">G</span> Gemini</span>
+    <span class="sp sp-d"><span class="a a-d">D</span> DeepSeek</span>
+    <span class="sp sp-c"><span class="a a-c">C</span> Claude</span>
+    <span class="sp sp-gpt"><span class="a a-gpt">P</span> ChatGPT</span>
+    <span style="font-size:11px;color:var(--color-text-secondary);align-self:center;margin-left:4px">— attribution icon = কোন AI থেকে নেওয়া</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="show('summary')">📋 Summary</div>
+  <div class="tab" onclick="show('features')">✨ Features</div>
+  <div class="tab" onclick="show('techstack')">⚙️ Tech Stack</div>
+  <div class="tab" onclick="show('architecture')">🏗 Architecture</div>
+  <div class="tab" onclick="show('schema')">🗄 Data Schema</div>
+  <div class="tab" onclick="show('roadmap')">🗓 Roadmap</div>
+  <div class="tab" onclick="show('cost')">💰 Cost</div>
+  <div class="tab" onclick="show('attribution')">🏆 Attribution</div>
+</div>
+
+<!-- SUMMARY -->
+<div id="tab-summary" class="panel active">
+  <div class="alert">⚡ এটি 4টি AI-এর সেরা অংশ combine করা final plan। প্রতিটি সিদ্ধান্তের পাশে source icon দেওয়া আছে।</div>
+
+  <h3>Key Decisions (সবচেয়ে গুরুত্বপূর্ণ)</h3>
+  <div class="grid2" style="margin-bottom:18px">
+    <div class="decision-box">
+      <div class="decision-title">App Name <span class="a a-g" style="vertical-align:middle">G</span></div>
+      <div class="decision-val"><b>InkFlow Studio</b> — Gemini-এর "InkFlow" + professional suffix। Alternative: NoteFlow Pro (Claude)</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Architecture <span class="a a-d" style="vertical-align:middle">D</span></div>
+      <div class="decision-val"><b>Local-First PWA</b> — DeepSeek-এর Zero-Server philosophy। Drive = backend। Optional server Phase 3+।</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Canvas Engine <span class="a a-d" style="vertical-align:middle">D</span><span class="a a-gpt" style="vertical-align:middle">P</span></div>
+      <div class="decision-val"><b>perfect-freehand + Konva.js</b> — stroke quality + shape management। tldraw (Claude) fastest alternative।</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">OCR Stack <span class="a a-d" style="vertical-align:middle">D</span><span class="a a-gpt" style="vertical-align:middle">P</span></div>
+      <div class="decision-val"><b>MyScript iinkJS</b> (real-time, online) + <b>Tesseract.js</b> (offline fallback) + <b>Google Vision API</b> (best accuracy)</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Shape Recognition <span class="a a-d" style="vertical-align:middle">D</span><span class="a a-c" style="vertical-align:middle">C</span><span class="a a-gpt" style="vertical-align:middle">P</span></div>
+      <div class="decision-val"><b>$1 Unistroke Recognizer</b> (offline) + <b>Azure Ink Recognizer</b> (cloud, 85%+ confidence threshold)</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Rich Text <span class="a a-d" style="vertical-align:middle">D</span><span class="a a-gpt" style="vertical-align:middle">P</span></div>
+      <div class="decision-val"><b>TipTap (ProseMirror-based)</b> — extensible, collaboration-ready। Unanimous: DeepSeek + ChatGPT।</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Offline Storage <span class="a a-d" style="vertical-align:middle">D</span><span class="a a-gpt" style="vertical-align:middle">P</span></div>
+      <div class="decision-val"><b>IndexedDB + Dexie.js + Workbox</b> — browser-based, structured query, PWA cache</div>
+    </div>
+    <div class="decision-box">
+      <div class="decision-title">Unique Feature <span class="a a-g" style="vertical-align:middle">G</span></div>
+      <div class="decision-val"><b>Audio Sync</b> — শুধু Gemini এই feature দিয়েছে। Note লেখার সময় record, word-click করলে সেই সময়ের audio play।</div>
+    </div>
+  </div>
+
+  <h3>Feature Count by Category</h3>
+  <div class="grid4">
+    <div class="metric"><div class="mval" style="color:#5DCAA5">13</div><div class="mlbl">Core / MVP Features</div></div>
+    <div class="metric"><div class="mval" style="color:#7F77DD">11</div><div class="mlbl">Advanced Features</div></div>
+    <div class="metric"><div class="mval" style="color:#EF9F27">11</div><div class="mlbl">Optional / Future</div></div>
+    <div class="metric"><div class="mval" style="color:#D85A30">5</div><div class="mlbl">Dev Phases</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div id="tab-features" class="panel">
+  <h3>Core Features (MVP) — Phase 1-2 তে করতে হবে</h3>
+  <div class="card">
+    <div class="feat-item">
+      <div class="feat-icon">✏️</div>
+      <div><div class="feat-name">Pressure-sensitive Pen Drawing <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">perfect-freehand library। PointerEvent.pressure দিয়ে line weight vary। Bezier smoothing (Chaikin algorithm)। Tablet/stylus support।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">⬡</div>
+      <div><div class="feat-name">Shape Auto-Recognition <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">$1 Unistroke Recognizer (offline) + Azure Ink Recognizer (cloud)। Douglas-Peucker simplification। 85%+ confidence হলেই snap। Circle, rect, triangle, arrow, ellipse, line।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">T</div>
+      <div><div class="feat-name">Rich Text Editor <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">TipTap (ProseMirror-based)। Bold, italic, underline, font, size, color। Canvas-এর যেকোনো জায়গায় click করলে cursor। Multi-level lists, checklists।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">⊖</div>
+      <div><div class="feat-name">Eraser Tool (Stroke + Segment) <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span></span></div>
+      <div class="feat-desc">পুরো stroke erase বা partial segment erase। Pixel-based eraser option।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">↩️</div>
+      <div><div class="feat-name">Unlimited Undo/Redo <span class="attr"><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">Command Pattern। প্রতিটা operation একটা Command object। Stack-এ push/pop। Ctrl+Z / Ctrl+Y।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🔎</div>
+      <div><div class="feat-name">Infinite Canvas + Pan/Zoom <span class="attr"><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">CSS transform দিয়ে infinite canvas। Pinch-to-zoom, mouse wheel, keyboard। 10%-500% zoom। Alignment guides।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🖼</div>
+      <div><div class="feat-name">Image Import <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">Drag & drop, paste, camera/gallery। Resize, rotate। Base64 বা Cloud Storage URL। PDF annotation/import (ChatGPT)।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">📄</div>
+      <div><div class="feat-name">PDF + DOCX Export <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">PDF: html2canvas + jsPDF (frontend) বা Puppeteer (server-side, 300 DPI)। DOCX: docx.js (dolanmiu)। Text → paragraphs, drawings → embedded PNG।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">☁️</div>
+      <div><div class="feat-name">Google Drive Auto-Save <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">OAuth 2.0। Drive API v3। 15s debounce auto-save। Local IndexedDB → Drive JSON। Conflict notification। File structure: MyNotes/NotebookName/page_1.json।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🎨</div>
+      <div><div class="feat-name">Background Customization <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-g">G</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">Color picker + patterns: blank, lined, grid, dotted। Paper texture (পুরানো কাগজের feel)। প্রতি page আলাদা background।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">📚</div>
+      <div><div class="feat-name">Multi-Notebook + Page Management <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">Multiple notebooks, multiple pages। Page reorder (drag)। Cover image per notebook। Tabbed interface (Gemini)।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🌙</div>
+      <div><div class="feat-name">Dark Mode + Ink Auto-Adjust <span class="attr"><span class="a a-g">G</span><span class="a a-d">D</span></span></div>
+      <div class="feat-desc">Gemini-এর unique idea: dark mode-এ হাতে লেখার color automatically adjust হবে যাতে চোখে কষ্ট না হয়।</div></div>
+    </div>
+    <div class="feat-item" style="border-bottom:none">
+      <div class="feat-icon">🔐</div>
+      <div><div class="feat-name">Google OAuth + Zero-Knowledge <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">DeepSeek-এর philosophy: কোনো password store করা হবে না। Notes শুধু user-এর Drive-এ। আমাদের server-এ কিছু নেই।</div></div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px">Advanced Features — Phase 3</h3>
+  <div class="card">
+    <div class="feat-item">
+      <div class="feat-icon">👁</div>
+      <div><div class="feat-name">OCR / Handwriting → Text <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">MyScript iinkJS (real-time, online)। Tesseract.js (offline, Bangla+English)। Toggle mode। Lasso select করে convert।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🔍</div>
+      <div><div class="feat-name">Handwriting Search <span class="attr"><span class="a a-g">G</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">OCR-কৃত text index করা। Search করলে handwritten word-ও খুঁজে পাবে। Gemini এবং ChatGPT দুজনই suggest করেছে।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">⚡</div>
+      <div><div class="feat-name">Floating + Movable Toolbar <span class="attr"><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">Gemini-এর unique idea। Toolbar স্ক্রিনের যেকোনো পাশে drag করে নিয়ে যাওয়া যাবে। Distraction-free writing।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">📐</div>
+      <div><div class="feat-name">Layer System <span class="attr"><span class="a a-g">G</span><span class="a a-c">C</span></span></div>
+      <div class="feat-desc">Graphic design-এর মতো layers। Image-এর উপরে লিখলে পরে শুধু লেখা আলাদা করা যাবে।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">✂️</div>
+      <div><div class="feat-name">Lasso Select + Pen Gestures <span class="attr"><span class="a a-gpt">P</span><span class="a a-d">D</span></span></div>
+      <div class="feat-desc">Lasso দিয়ে arbitrary area select। Scratch to erase gesture। Select করা ink-কে text-এ convert।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🌐</div>
+      <div><div class="feat-name">Offline-First + PWA <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">IndexedDB + Dexie.js। Service Worker + Workbox। Internet ছাড়াও কাজ করবে। Online হলে auto-sync।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🔢</div>
+      <div><div class="feat-name">Math Equation Editor <span class="attr"><span class="a a-gpt">P</span><span class="a a-g">G</span></span></div>
+      <div class="feat-desc">LaTeX-based। Type করলে rendered formula। OneNote-এর মতো math solver option।</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">বাং</div>
+      <div><div class="feat-name">Bengali Localization <span class="attr"><span class="a a-gpt">P</span></span></div>
+      <div class="feat-desc">ChatGPT-এর unique contribution। Noto Sans Bengali font। Bengali + English UI। WCAG accessibility। Screen reader support।</div></div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:16px">Optional / Future Features</h3>
+  <div class="grid2">
+    <div class="card" style="margin-bottom:0">
+      <div class="feat-item" style="padding-top:0">
+        <div class="feat-icon">🎙</div>
+        <div><div class="feat-name">Audio Sync <span class="attr"><span class="a a-g">G</span></span></div>
+        <div class="feat-desc"><b>Gemini-এর সেরা exclusive idea।</b> লেখার সময় audio record। পরে word click করলে সেই মুহূর্তের audio play।</div></div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🃏</div>
+        <div><div class="feat-name">Flashcard Generator <span class="attr"><span class="a a-g">G</span></span></div>
+        <div class="feat-desc">Note থেকে auto quiz/flashcard। Study tool।</div></div>
+      </div>
+      <div class="feat-item" style="padding-bottom:0;border-bottom:none">
+        <div class="feat-icon">🤖</div>
+        <div><div class="feat-name">AI Summarizer <span class="attr"><span class="a a-g">G</span><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+        <div class="feat-desc">Claude/GPT API দিয়ে note summarize। 3 AI-ই suggest করেছে।</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="feat-item" style="padding-top:0">
+        <div class="feat-icon">👥</div>
+        <div><div class="feat-name">Real-time Collaboration <span class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+        <div class="feat-desc">Yjs CRDT। WebSocket। Conflict-free।</div></div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">📌</div>
+        <div><div class="feat-name">Version History <span class="attr"><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+        <div class="feat-desc">প্রতিটা save-এর snapshot। যেকোনো সময় ফিরে যাওয়া।</div></div>
+      </div>
+      <div class="feat-item" style="padding-bottom:0;border-bottom:none">
+        <div class="feat-icon">🔌</div>
+        <div><div class="feat-name">Plugin System <span class="attr"><span class="a a-d">D</span></span></div>
+        <div class="feat-desc">3rd party plugins। Custom tools, themes।</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div id="tab-techstack" class="panel">
+  <h3>Final Tech Stack — সর্বসম্মত সেরা choices</h3>
+  <div class="card">
+    <div class="stack-row">
+      <div class="stack-lbl">Framework</div>
+      <div class="tags">
+        <span class="tag best">React 18 + TypeScript</span>
+        <span class="tag best">Next.js 14 (App Router)</span>
+        <div class="attr" style="margin-left:2px"><span class="a a-c">C</span><span class="a a-d">D</span><span class="a a-gpt">P</span></div>
+        <span style="font-size:11px;color:var(--color-text-secondary);align-self:center">— 3 AI unanimous</span>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Canvas / Stroke</div>
+      <div class="tags">
+        <span class="tag best">perfect-freehand</span>
+        <span class="tag best">Konva.js</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></div>
+        <span class="tag" style="opacity:.7">alt: tldraw</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Shape Recog.</div>
+      <div class="tags">
+        <span class="tag best">$1 Unistroke Recognizer</span>
+        <div class="attr"><span class="a a-d">D</span></div>
+        <span class="tag best">Azure Ink Recognizer (cloud)</span>
+        <div class="attr"><span class="a a-gpt">P</span></div>
+        <span class="tag">Douglas-Peucker algo</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">OCR Stack</div>
+      <div class="tags">
+        <span class="tag best">MyScript iinkJS (real-time)</span>
+        <div class="attr"><span class="a a-d">D</span></div>
+        <span class="tag best">Tesseract.js v5 (offline)</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></div>
+        <span class="tag">Google Vision API (best accuracy)</span>
+        <div class="attr"><span class="a a-gpt">P</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Rich Text</div>
+      <div class="tags">
+        <span class="tag best">TipTap (ProseMirror)</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">State Mgmt</div>
+      <div class="tags">
+        <span class="tag best">Zustand</span>
+        <div class="attr"><span class="a a-c">C</span><span class="a a-d">D</span></div>
+        <span class="tag">Immer (immutable)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Offline / PWA</div>
+      <div class="tags">
+        <span class="tag best">IndexedDB + Dexie.js</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></div>
+        <span class="tag best">Workbox (Service Worker)</span>
+        <div class="attr"><span class="a a-d">D</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Export</div>
+      <div class="tags">
+        <span class="tag best">html2canvas + jsPDF</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">pdfmake (layout control)</span>
+        <div class="attr"><span class="a a-d">D</span></div>
+        <span class="tag">Puppeteer (server-side)</span>
+        <div class="attr"><span class="a a-gpt">P</span></div>
+        <span class="tag best">docx.js (DOCX)</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-c">C</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Auth</div>
+      <div class="tags">
+        <span class="tag best">NextAuth.js + Google OAuth 2.0</span>
+        <div class="attr"><span class="a a-c">C</span><span class="a a-d">D</span></div>
+        <span class="tag">Firebase Auth (alt)</span>
+        <div class="attr"><span class="a a-d">D</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">UI Styling</div>
+      <div class="tags">
+        <span class="tag best">TailwindCSS v4</span>
+        <div class="attr"><span class="a a-c">C</span><span class="a a-d">D</span></div>
+        <span class="tag best">Shadcn/ui</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">Framer Motion</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Backend (P3+)</div>
+      <div class="tags">
+        <span class="tag best">Node.js + Next.js API Routes</span>
+        <span class="tag best">PostgreSQL + Prisma</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">Redis (Upstash)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">MongoDB (alt)</span>
+        <div class="attr"><span class="a a-g">G</span><span class="a a-gpt">P</span></div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-lbl">Deployment</div>
+      <div class="tags">
+        <span class="tag best">Vercel (frontend)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">Railway (DB)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">Cloudflare R2 (files)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span class="tag">Electron (desktop later)</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-g">G</span></div>
+      </div>
+    </div>
+    <div class="stack-row" style="border-bottom:none">
+      <div class="stack-lbl">Collaboration</div>
+      <div class="tags">
+        <span class="tag">Yjs (CRDT)</span>
+        <div class="attr"><span class="a a-d">D</span><span class="a a-c">C</span><span class="a a-gpt">P</span></div>
+        <span class="tag">Socket.io (WebSocket)</span>
+        <div class="attr"><span class="a a-c">C</span></div>
+        <span style="font-size:11px;color:var(--color-text-secondary);align-self:center">— Phase 3+</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<div id="tab-architecture" class="panel">
+  <h3>System Architecture — Local-First Hybrid</h3>
+  <div class="txt" style="margin-bottom:14px">DeepSeek-এর <b>Local-First philosophy</b> + Claude-এর <b>backend scalability</b> combined।</div>
+
+  <div class="card">
+    <h4>High-Level Flow <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></h4>
+    <div class="txt" style="font-size:12px;line-height:2;margin-bottom:8px">
+      <b>1.</b> User logs in → Google OAuth 2.0 → Access token stored securely<br>
+      <b>2.</b> App loads → IndexedDB থেকে local notes render (instant)<br>
+      <b>3.</b> User edits → Zustand state update → Command history push<br>
+      <b>4.</b> Canvas change → 15s debounce → IndexedDB save<br>
+      <b>5.</b> Sync Engine → IndexedDB diff → Drive API update (JSON file)<br>
+      <b>6.</b> Conflict detected → User notification → Merge/override choice<br>
+      <b>7.</b> Export → html2canvas → jsPDF বা docx.js → Download
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h4>Drive File Structure <span class="attr"><span class="a a-d">D</span></span></h4>
+    <div class="json-block">
+<span class="jc">Google Drive/</span>
+├── <span class="jk">InkFlow Studio/</span>         <span class="jc"># App folder</span>
+│   ├── <span class="jk">Physics Notes/</span>
+│   │   ├── <span class="jv">meta.json</span>          <span class="jc"># notebook info, bg, color</span>
+│   │   ├── <span class="jv">page_1.json</span>        <span class="jc"># canvas elements</span>
+│   │   └── <span class="jv">page_2.json</span>
+│   └── <span class="jk">Daily Journal/</span>
+│       └── <span class="jv">page_1.json</span>
+└── <span class="jv">user_prefs.json</span>            <span class="jc"># settings, themes</span></div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h4>Canvas Rendering Pipeline <span class="attr"><span class="a a-c">C</span><span class="a a-d">D</span></span></h4>
+    <div class="txt" style="font-size:12px;line-height:1.9">
+      <b>Draw:</b> PointerEvent → raw points[] → perfect-freehand smoothing → Konva Line render<br>
+      <b>Shape detect:</b> pen-up → Douglas-Peucker simplify → $1 Recognizer → 85%+ confidence → auto-snap<br>
+      <b>OCR mode:</b> stroke complete → MyScript API call → text replace (online) / Tesseract (offline)<br>
+      <b>Serialize:</b> Konva canvas → JSON (elements array) → IndexedDB → Drive
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h4>Security Model <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></h4>
+    <div class="txt" style="font-size:12px;line-height:1.9">
+      <b>Zero-Knowledge (DeepSeek):</b> Notes শুধু user-এর Google Drive-এ। আমাদের server-এ কোনো note data নেই।<br>
+      <b>HTTPS everywhere:</b> সব API call TLS। PKCE OAuth2 flow।<br>
+      <b>Token storage:</b> HttpOnly cookies। Browser storage-এ কোনো secret নেই।<br>
+      <b>GDPR (ChatGPT):</b> Data export/delete on request। Privacy policy। Consent screen।<br>
+      <b>API keys:</b> শুধু server-side (Next.js API routes)। Client-এ কোনো secret নেই।
+    </div>
+  </div>
+</div>
+
+<!-- DATA SCHEMA -->
+<div id="tab-schema" class="panel">
+  <h3>Data Schema — Combined Best</h3>
+  <div class="txt" style="margin-bottom:12px">DeepSeek-এর JSON schema + Claude-এর PostgreSQL schema combined।</div>
+
+  <div class="card">
+    <h4>Note JSON Structure (per page) <span class="attr"><span class="a a-d">D</span><span class="a a-gpt">P</span></span></h4>
+    <div class="json-block">{
+  <span class="jk">"id"</span>: <span class="jv">"page_uuid"</span>,
+  <span class="jk">"notebookId"</span>: <span class="jv">"nb_uuid"</span>,
+  <span class="jk">"background"</span>: {
+    <span class="jk">"color"</span>: <span class="jv">"#ffffff"</span>,
+    <span class="jk">"pattern"</span>: <span class="jv">"grid"</span>  <span class="jc">// blank|lined|grid|dotted</span>
+  },
+  <span class="jk">"elements"</span>: [
+    {
+      <span class="jk">"type"</span>: <span class="jv">"drawing"</span>,
+      <span class="jk">"strokes"</span>: [{ <span class="jk">"points"</span>: [{<span class="jv">x,y,pressure</span>}], <span class="jk">"brush"</span>: {<span class="jv">color, size</span>} }],
+      <span class="jk">"recognizedText"</span>: <span class="jv">"Hello"</span>  <span class="jc">// OCR result — for search</span>
+    },
+    {
+      <span class="jk">"type"</span>: <span class="jv">"shape"</span>,
+      <span class="jk">"shapeType"</span>: <span class="jv">"rectangle"</span>,
+      <span class="jk">"position"</span>: {<span class="jk">"x"</span>:<span class="jv">100</span>, <span class="jk">"y"</span>:<span class="jv">200</span>},
+      <span class="jk">"size"</span>: {<span class="jk">"w"</span>:<span class="jv">150</span>, <span class="jk">"h"</span>:<span class="jv">100</span>},
+      <span class="jk">"style"</span>: {<span class="jk">"stroke"</span>:<span class="jv">"#000"</span>, <span class="jk">"fill"</span>:<span class="jv">"transparent"</span>}
+    },
+    {
+      <span class="jk">"type"</span>: <span class="jv">"text"</span>,
+      <span class="jk">"content"</span>: <span class="jv">"Note content..."</span>,
+      <span class="jk">"style"</span>: {<span class="jk">"fontSize"</span>:<span class="jv">16</span>, <span class="jk">"bold"</span>:<span class="jv">true</span>, <span class="jk">"font"</span>:<span class="jv">"Noto Sans Bengali"</span>},
+      <span class="jk">"position"</span>: {<span class="jk">"x"</span>:<span class="jv">100</span>, <span class="jk">"y"</span>:<span class="jv">300</span>},
+      <span class="jk">"size"</span>: {<span class="jk">"width"</span>:<span class="jv">400</span>, <span class="jk">"height"</span>:<span class="jv">200</span>}
+    },
+    {
+      <span class="jk">"type"</span>: <span class="jv">"image"</span>,
+      <span class="jk">"src"</span>: <span class="jv">"drive_file_id_or_base64"</span>,
+      <span class="jk">"position"</span>: {<span class="jk">"x"</span>:<span class="jv">50</span>, <span class="jk">"y"</span>:<span class="jv">50</span>},
+      <span class="jk">"size"</span>: {<span class="jk">"width"</span>:<span class="jv">300</span>, <span class="jk">"height"</span>:<span class="jv">200</span>}
+    },
+    {
+      <span class="jk">"type"</span>: <span class="jv">"audio"</span>,          <span class="jc">// Gemini's Audio Sync feature</span>
+      <span class="jk">"src"</span>: <span class="jv">"drive_audio_id"</span>,
+      <span class="jk">"timestamps"</span>: [{<span class="jk">"elementId"</span>:<span class="jv">"el_001"</span>, <span class="jk">"time"</span>:<span class="jv">42.5</span>}]
+    }
+  ],
+  <span class="jk">"version"</span>: <span class="jv">3</span>,              <span class="jc">// conflict resolution</span>
+  <span class="jk">"updatedAt"</span>: <span class="jv">"2026-05-06T..."</span>
+}</div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h4>PostgreSQL Schema (Backend — Phase 3+) <span class="attr"><span class="a a-c">C</span></span></h4>
+    <table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)"><th style="text-align:left;padding:6px;color:var(--color-text-secondary);font-size:10px;text-transform:uppercase">Table</th><th style="text-align:left;padding:6px;color:var(--color-text-secondary);font-size:10px;text-transform:uppercase">Key Columns</th></tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)"><td style="padding:7px 6px;font-weight:500">users</td><td style="padding:7px 6px;color:var(--color-text-secondary)">id (uuid), email, googleId, driveToken (encrypted), createdAt</td></tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)"><td style="padding:7px 6px;font-weight:500">notebooks</td><td style="padding:7px 6px;color:var(--color-text-secondary)">id, userId(FK), title, bgColor, bgPattern, driveFileId, cover_image, updatedAt</td></tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)"><td style="padding:7px 6px;font-weight:500">pages</td><td style="padding:7px 6px;color:var(--color-text-secondary)">id, notebookId(FK), order, canvasJson(jsonb), thumbnail, version</td></tr>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)"><td style="padding:7px 6px;font-weight:500">elements</td><td style="padding:7px 6px;color:var(--color-text-secondary)">id, pageId(FK), type(enum), data(jsonb), zIndex, recognizedText</td></tr>
+      <tr><td style="padding:7px 6px;font-weight:500">audio_sync</td><td style="padding:7px 6px;color:var(--color-text-secondary)">id, pageId(FK), audioUrl, timestamps(jsonb) — Gemini feature</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ROADMAP -->
+<div id="tab-roadmap" class="panel">
+  <h3>Development Roadmap — 5 Phases</h3>
+
+  <div class="phase p0">
+    <div class="phase-hdr"><span class="badge b-gray">Phase 0</span> প্রস্তুতি <span style="font-size:11px;color:var(--color-text-secondary)">— 2 সপ্তাহ</span> <span class="attr"><span class="a a-d">D</span></span></div>
+    <div class="phase-body">
+      ✦ Figma-তে full UI/UX wireframe (mockup)<br>
+      ✦ Google Cloud Console → Drive API + OAuth consent screen<br>
+      ✦ Next.js + TypeScript + Tailwind + Prisma project setup<br>
+      ✦ GitHub repository + CI/CD pipeline (GitHub Actions)
+    </div>
+  </div>
+
+  <div class="phase p1">
+    <div class="phase-hdr"><span class="badge b-teal">Phase 1</span> MVP Core <span style="font-size:11px;color:var(--color-text-secondary)">— 3 মাস</span> <span class="attr"><span class="a a-c">C</span><span class="a a-d">D</span><span class="a a-gpt">P</span></span></div>
+    <div class="phase-body">
+      ✦ Canvas engine (perfect-freehand + Konva.js)<br>
+      ✦ Pen drawing, pressure-sensitive, eraser<br>
+      ✦ TipTap inline rich text editor<br>
+      ✦ Basic shape tools (manual draw, not auto-detect yet)<br>
+      ✦ Image drag-drop + paste<br>
+      ✦ Background color + patterns<br>
+      ✦ Page management (add/delete/reorder)<br>
+      ✦ Google OAuth login (NextAuth.js)<br>
+      ✦ IndexedDB local storage (Dexie.js)<br>
+      ✦ Google Drive basic sync<br>
+      ✦ PDF export (jsPDF + html2canvas)<br>
+      ✦ Dark mode + ink color auto-adjust (Gemini)
+    </div>
+  </div>
+
+  <div class="phase p2">
+    <div class="phase-hdr"><span class="badge b-purple">Phase 2</span> Smart Features <span style="font-size:11px;color:var(--color-text-secondary)">— 2.5 মাস</span> <span class="attr"><span class="a a-c">C</span><span class="a a-d">D</span><span class="a a-gpt">P</span></span></div>
+    <div class="phase-body">
+      ✦ Shape auto-recognition ($1 Recognizer + Azure Ink API)<br>
+      ✦ OCR: Tesseract.js offline + MyScript iinkJS online<br>
+      ✦ Handwriting search (OCR text indexing)<br>
+      ✦ DOCX export (docx.js)<br>
+      ✦ Drive auto-save (15s debounce) + conflict resolution<br>
+      ✦ Undo/redo (Command Pattern)<br>
+      ✦ Lasso select + pen gestures<br>
+      ✦ Floating movable toolbar (Gemini)<br>
+      ✦ Layer system<br>
+      ✦ PWA (Service Worker + Workbox) — offline support
+    </div>
+  </div>
+
+  <div class="phase p3">
+    <div class="phase-hdr"><span class="badge b-amber">Phase 3</span> Advanced <span style="font-size:11px;color:var(--color-text-secondary)">— 2.5 মাস</span> <span class="attr"><span class="a a-g">G</span><span class="a a-gpt">P</span></span></div>
+    <div class="phase-body">
+      ✦ Audio Sync feature (Gemini exclusive — record + timestamp)<br>
+      ✦ Math equation editor (LaTeX)<br>
+      ✦ Bengali localization (Noto Sans Bengali font)<br>
+      ✦ WCAG accessibility (screen reader, keyboard nav)<br>
+      ✦ Page templates gallery<br>
+      ✦ Version history (Drive revisions)<br>
+      ✦ Tabbed notebook interface (Gemini)<br>
+      ✦ Backend server setup (Node.js + PostgreSQL + Prisma)
+    </div>
+  </div>
+
+  <div class="phase p4">
+    <div class="phase-hdr"><span class="badge b-coral">Phase 4</span> Polish + Optional <span style="font-size:11px;color:var(--color-text-secondary)">— 2 মাস</span> <span class="attr"><span class="a a-c">C</span><span class="a a-gpt">P</span></span></div>
+    <div class="phase-body">
+      ✦ Real-time collaboration (Yjs CRDT + Socket.io)<br>
+      ✦ AI Summarizer (Claude/GPT API)<br>
+      ✦ Flashcard Generator (Gemini's idea)<br>
+      ✦ Web Clipper browser extension (Claude)<br>
+      ✦ Electron desktop app wrapper (Windows/Mac)<br>
+      ✦ Performance optimization (virtual canvas, lazy render)<br>
+      ✦ Beta testing + bug fixes + launch<br>
+      ✦ CI/CD full pipeline, monitoring
+    </div>
+  </div>
+</div>
+
+<!-- COST -->
+<div id="tab-cost" class="panel">
+  <h3>Cost Estimates <span class="attr"><span class="a a-gpt">P</span></span></h3>
+  <div class="txt" style="margin-bottom:14px">ChatGPT-এর detailed cost breakdown — সবচেয়ে comprehensive analysis।</div>
+
+  <div class="grid3" style="margin-bottom:16px">
+    <div class="metric"><div class="mval" style="color:#5DCAA5">~$47k</div><div class="mlbl">Total Year 1 Dev Cost</div></div>
+    <div class="metric"><div class="mval" style="color:#7F77DD">~12</div><div class="mlbl">Months Full Build</div></div>
+    <div class="metric"><div class="mval" style="color:#EF9F27">~$50</div><div class="mlbl">Monthly Infra Cost</div></div>
+  </div>
+
+  <div class="card">
+    <h4>Development Effort</h4>
+    <div class="cost-row"><span>Phase 0 — Setup + Design</span><span>80 hrs × $50 = $4,000</span></div>
+    <div class="cost-row"><span>Phase 1 — MVP Core</span><span>400 hrs × $50 = $20,000</span></div>
+    <div class="cost-row"><span>Phase 2 — Smart Features</span><span>300 hrs × $50 = $15,000</span></div>
+    <div class="cost-row"><span>Phase 3 — Advanced</span><span>200 hrs × $50 = $10,000</span></div>
+    <div class="cost-row"><span>Phase 4 — Polish + Launch</span><span>150 hrs × $50 = $7,500</span></div>
+    <div class="cost-row" style="font-weight:500;color:var(--color-text-primary)"><span>Total Development</span><span>~$56,500</span></div>
+  </div>
+
+  <div class="card" style="margin-top:10px">
+    <h4>Infrastructure & APIs (Monthly)</h4>
+    <div class="cost-row"><span>Vercel (frontend hosting)</span><span>$0 (free tier)</span></div>
+    <div class="cost-row"><span>Railway (PostgreSQL DB)</span><span>~$5/month</span></div>
+    <div class="cost-row"><span>Google Drive API</span><span>$0 (free quota)</span></div>
+    <div class="cost-row"><span>Tesseract.js (offline)</span><span>$0</span></div>
+    <div class="cost-row"><span>MyScript iinkJS</span><span>Commercial license (~$500/yr)</span></div>
+    <div class="cost-row"><span>Azure Ink Recognizer</span><span>~$1 per 1,000 calls</span></div>
+    <div class="cost-row"><span>Google Vision OCR</span><span>~$1.50 per 1,000 images</span></div>
+    <div class="cost-row"><span>Cloudflare R2 (storage)</span><span>~$0.015/GB</span></div>
+    <div class="cost-row" style="font-weight:500;color:var(--color-text-primary)"><span>Total Monthly (low traffic)</span><span>~$30-50/month</span></div>
+  </div>
+</div>
+
+<!-- ATTRIBUTION -->
+<div id="tab-attribution" class="panel">
+  <h3>Attribution Matrix — কোন plan থেকে কী নেওয়া হয়েছে</h3>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div class="card" style="border-left:3px solid #5DCAA5">
+      <div class="feat-name" style="margin-bottom:6px"><span class="sp sp-g"><span class="a a-g">G</span> Gemini-এর Exclusive Contributions</span></div>
+      <div class="feat-desc" style="line-height:1.9">
+        🎙 Audio Sync (click word → play recording) — <b>সেরা unique idea</b><br>
+        ⚡ Floating movable toolbar<br>
+        🌙 Dark mode ink color auto-adjust<br>
+        📑 Tabbed interface for notebooks<br>
+        🃏 Flashcard/Quiz generator from notes<br>
+        📛 App name: "InkFlow" (সবচেয়ে catchy)
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid #7F77DD">
+      <div class="feat-name" style="margin-bottom:6px"><span class="sp sp-d"><span class="a a-d">D</span> DeepSeek-এর Exclusive Contributions</span></div>
+      <div class="feat-desc" style="line-height:1.9">
+        🏛 Local-First + Zero-Knowledge philosophy — <b>সেরা architecture idea</b><br>
+        📚 perfect-freehand library (stroke quality)<br>
+        📝 MyScript iinkJS (real-time OCR)<br>
+        🔷 $1 Unistroke Recognizer<br>
+        💾 Dexie.js + Workbox (offline)<br>
+        🗄 Drive file structure design<br>
+        🔐 recognizedText in JSON schema
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid #378ADD">
+      <div class="feat-name" style="margin-bottom:6px"><span class="sp sp-c"><span class="a a-c">C</span> Claude-এর Exclusive Contributions</span></div>
+      <div class="feat-desc" style="line-height:1.9">
+        🔺 Douglas-Peucker algorithm (85% threshold)<br>
+        〰 Chaikin algorithm (Bezier smoothing)<br>
+        📦 tldraw recommendation (fastest build)<br>
+        🗃 PostgreSQL + Prisma schema<br>
+        ⚡ Redis caching layer<br>
+        📁 Detailed folder structure<br>
+        🌐 Cloudflare R2 file storage
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid #EF9F27">
+      <div class="feat-name" style="margin-bottom:6px"><span class="sp sp-gpt"><span class="a a-gpt">P</span> ChatGPT-এর Exclusive Contributions</span></div>
+      <div class="feat-desc" style="line-height:1.9">
+        📊 Competitive analysis (7 apps table) — <b>সবচেয়ে thorough research</b><br>
+        🔷 Azure Ink Recognizer for shapes<br>
+        🇧🇩 Bengali localization + Noto Sans Bengali<br>
+        ♿ WCAG accessibility guidelines<br>
+        🔒 GDPR privacy compliance<br>
+        💰 Detailed cost estimates<br>
+        📐 Math equation (LaTeX) support<br>
+        🧪 Testing strategy (Cypress)
+      </div>
+    </div>
+  </div>
+
+  <h3>Common Contributions (সব AI একমত)</h3>
+  <div class="card">
+    <table class="attr-tbl">
+      <tr><th>Feature</th><th>Gemini</th><th>DeepSeek</th><th>Claude</th><th>ChatGPT</th></tr>
+      <tr><td>React + TypeScript</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Google Drive sync</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>PDF export</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Shape auto-recognition</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>OCR / Handwriting-to-text</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Tesseract.js</td><td></td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>DOCX export</td><td></td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Real-time collaboration (Yjs)</td><td></td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>AI Summarizer</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Zustand state management</td><td></td><td>✓</td><td>✓</td><td></td></tr>
+      <tr><td>Background patterns</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Dark mode</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:12px;background:var(--color-background-secondary)">
+    <div class="feat-name" style="margin-bottom:6px">🏆 Final Verdict — কোন AI সবচেয়ে valuable plan দিয়েছে</div>
+    <div class="feat-desc" style="line-height:1.9">
+      <b style="color:var(--color-text-primary)">DeepSeek</b> — সবচেয়ে technical depth। Local-first philosophy, perfect-freehand, data schema, security — সব কিছুই production-ready।<br>
+      <b style="color:var(--color-text-primary)">ChatGPT</b> — সবচেয়ে thorough research। Competitive analysis, cost breakdown, Bengali localization, GDPR — real-world considerations।<br>
+      <b style="color:var(--color-text-primary)">Gemini</b> — সবচেয়ে creative features। Audio Sync একটাই unique killer feature যা অন্য কেউ দেয়নি।<br>
+      <b style="color:var(--color-text-primary)">Claude</b> — সবচেয়ে structured। Algorithm details, folder structure, database schema, deployment — developer-ready।<br>
+      <b style="color:var(--color-text-primary)">Combined</b> — এই 4টি একসাথে = একটি complete, production-grade blueprint।
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
