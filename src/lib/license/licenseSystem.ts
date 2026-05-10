@@ -20,7 +20,7 @@ const LICENSE_CACHE_KEY = 'inkflow_lic';
 
 export interface LicenseStatus {
   valid: boolean;
-  reason?: 'not_activated' | 'expired' | 'max_devices' | 'revoked' | 'offline_grace' | 'ok';
+  reason?: 'not_activated' | 'expired' | 'max_devices' | 'revoked' | 'offline_grace' | 'ok' | 'server_error';
   expiresAt?: number;
   deviceCount?: number;
   email?: string;
@@ -80,6 +80,10 @@ function clearCache(): void {
   localStorage.removeItem(LICENSE_CACHE_KEY);
 }
 
+function isSupabaseAuthError(error: any): boolean {
+  return Boolean(error && (error.status === 401 || error.message?.toLowerCase?.().includes('invalid api key')));
+}
+
 // ── Tamper detection ──────────────────────────────────────────
 function checkTamper(): boolean {
   // In Electron, we verify the app binary hash at startup
@@ -126,6 +130,10 @@ export async function checkLicense(): Promise<LicenseStatus> {
       .select('*')
       .eq('key', cache.key)
       .single();
+
+    if (isSupabaseAuthError(error)) {
+      return { valid: false, reason: 'server_error' };
+    }
 
     if (error || !data) {
       // Server error — fall back to grace period
@@ -213,6 +221,10 @@ export async function activateLicense(key: string, email: string): Promise<{
       .select('*')
       .eq('key', key.toUpperCase().trim())
       .single();
+
+    if (isSupabaseAuthError(error)) {
+      return { success: false, error: 'License server not configured correctly. Check Supabase env vars and redeploy.' };
+    }
 
     if (error || !data) return { success: false, error: 'Invalid license key. Please check and try again.' };
     if (data.revoked) return { success: false, error: 'This license key has been revoked.' };

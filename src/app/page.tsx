@@ -74,6 +74,8 @@ export default function EditorPage() {
         return 'এই key সর্বোচ্চ ডিভাইস সীমা পূর্ণ করেছে।';
       case 'revoked':
         return 'এই লাইসেন্স বাতিল করা হয়েছে।';
+      case 'server_error':
+        return 'লাইসেন্স সার্ভার কনফিগার হয়নি। Vercel env vars এবং redeploy চেক করুন।';
       default:
         return 'চালিয়ে যেতে লাইসেন্স অ্যাক্টিভেট করুন।';
     }
@@ -86,6 +88,9 @@ export default function EditorPage() {
     if (e.includes('revoked')) return 'এই লাইসেন্স বাতিল করা হয়েছে।';
     if (e.includes('expired')) return 'লাইসেন্সের মেয়াদ শেষ।';
     if (e.includes('maximum allowed')) return 'এই key সর্বোচ্চ ডিভাইস সীমা পূর্ণ করেছে।';
+    if (e.includes('server not configured correctly')) {
+      return 'লাইসেন্স সার্ভার ঠিকমতো কনফিগার হয়নি। Vercel env vars এবং redeploy চেক করুন।';
+    }
     if (e.includes('could not connect') || e.includes('internet')) {
       return 'সার্ভারে সংযোগ হয়নি। ইন্টারনেট চেক করুন।';
     }
