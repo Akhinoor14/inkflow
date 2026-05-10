@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CONSTANTS } from '../../engine/constants.js'
+import { CONSTANTS } from '../engine/constants.js'
 
 export default function ConstantsPanel({ onSelect, onClose }) {
   const [search, setSearch] = useState('')

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { convertAll, fromBase, logicAnd, logicOr, logicXor, logicXnor, logicNot } from '../../engine/modes/baseN.js'
+import { convertAll, fromBase, logicAnd, logicOr, logicXor, logicXnor, logicNot } from '../engine/modes/baseN.js'
 
 export default function BaseNMode() {
   const [inputBase, setInputBase] = useState('DEC')

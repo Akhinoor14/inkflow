@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { emptyGrid, evaluateCell, COLS, ROWS } from '../../engine/modes/spreadsheet.js'
+import { emptyGrid, evaluateCell, COLS, ROWS } from '../engine/modes/spreadsheet.js'
 
 const COL_LABELS = ['A','B','C','D','E']
 const VISIBLE_ROWS = 6

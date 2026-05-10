@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { vAdd, vSub, vDot, vCross, vMag, vUnit, vAngle, vScale, fmtVec } from '../../engine/modes/vector.js'
+import { vAdd, vSub, vDot, vCross, vMag, vUnit, vAngle, vScale, fmtVec } from '../engine/modes/vector.js'
 
 export default function VectorMode() {
   const [a, setA] = useState(['1','2','3'])

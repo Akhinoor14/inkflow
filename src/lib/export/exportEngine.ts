@@ -114,7 +114,6 @@ export async function exportToDOCX(
               new ImageRun({
                 data: buf,
                 transformation: { width: 480, height: 340 },
-                type: 'png',
               }),
             ],
           })

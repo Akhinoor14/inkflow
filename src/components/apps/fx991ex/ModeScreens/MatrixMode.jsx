@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { matAdd, matSub, matMul, matScale, matTranspose, matInverse, matDet, matRef, matRref, matPow, fmtMatrix } from '../../engine/modes/matrix.js'
+import { matAdd, matSub, matMul, matScale, matTranspose, matInverse, matDet, matRef, matRref, matPow, fmtMatrix } from '../engine/modes/matrix.js'
 
 function emptyMatrix(r,c) { return Array.from({length:r},()=>Array(c).fill('0')) }
 

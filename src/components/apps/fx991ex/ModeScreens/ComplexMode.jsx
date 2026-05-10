@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { parseComplex, formatComplex, cAdd, cSub, cMul, cDiv, cAbs, cArg, cConj, cPow, cSqrt } from '../../engine/modes/complex.js'
+import { parseComplex, formatComplex, cAdd, cSub, cMul, cDiv, cAbs, cArg, cConj, cPow, cSqrt } from '../engine/modes/complex.js'
 
 export default function ComplexMode() {
   const [a, setA] = useState('3+4i')

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { normCDF, normPDF, normInvCDF, tCDF, chi2CDF, binomialPMF, binomialCDF, poissonPMF, poissonCDF, geometricPMF, geometricCDF, hypergeoPMF } from '../../engine/modes/statistics.js'
+import { normCDF, normPDF, normInvCDF, tCDF, chi2CDF, binomialPMF, binomialCDF, poissonPMF, poissonCDF, geometricPMF, geometricCDF, hypergeoPMF } from '../engine/modes/statistics.js'
 
 const DISTS = ['Normal','t-Dist','Chi²','Binomial','Poisson','Geometric','Hypergeometric']
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { stat1Var, stat2Var } from '../../engine/modes/statistics.js'
+import { stat1Var, stat2Var } from '../engine/modes/statistics.js'
 
 export default function StatMode() {
   const [mode, setMode] = useState('1VAR')

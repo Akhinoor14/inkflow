@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { solveQuadratic, solveCubic, solveQuartic, solveLinear, solveInequalityQuad } from '../../engine/modes/equation.js'
+import { solveQuadratic, solveCubic, solveQuartic, solveLinear, solveInequalityQuad } from '../engine/modes/equation.js'
 
 export default function EquationMode() {
   const [type, setType] = useState('QUAD')

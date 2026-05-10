@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CONV_CATEGORIES, convert } from '../../engine/conversions.js'
+import { CONV_CATEGORIES, convert } from '../engine/conversions.js'
 
 export default function EngineerConverter({ onClose }) {
   const [catIdx, setCatIdx] = useState(0)
