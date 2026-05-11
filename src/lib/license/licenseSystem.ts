@@ -17,6 +17,21 @@ const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days offline grace
 const MAX_DEVICES = 2; // one key works on max 2 devices
 const LICENSE_CACHE_KEY = 'foylx_lic';
+const SUPABASE_REQUEST_TIMEOUT_MS = 5000;
+
+async function withTimeout<T>(promise: PromiseLike<T>, timeoutMs = SUPABASE_REQUEST_TIMEOUT_MS): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      Promise.resolve(promise),
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Supabase request timed out')), timeoutMs);
+      }),
+    ]) as T;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
 
 export interface LicenseStatus {
   valid: boolean;
@@ -125,11 +140,13 @@ export async function checkLicense(): Promise<LicenseStatus> {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const machineId = getElectronMachineId() || await getMachineId();
 
-    const { data, error } = await supabase
-      .from('license_keys')
-      .select('*')
-      .eq('key', cache.key)
-      .single();
+    const { data, error } = (await withTimeout(
+      supabase
+        .from('license_keys')
+        .select('*')
+        .eq('key', cache.key)
+        .single()
+    )) as { data: any; error: any };
 
     if (isSupabaseAuthError(error)) {
       return { valid: false, reason: 'server_error' };
@@ -216,11 +233,13 @@ export async function activateLicense(key: string, email: string): Promise<{
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const machineId = getElectronMachineId() || await getMachineId();
 
-    const { data, error } = await supabase
-      .from('license_keys')
-      .select('*')
-      .eq('key', key.toUpperCase().trim())
-      .single();
+    const { data, error } = (await withTimeout(
+      supabase
+        .from('license_keys')
+        .select('*')
+        .eq('key', key.toUpperCase().trim())
+        .single()
+    )) as { data: any; error: any };
 
     if (isSupabaseAuthError(error)) {
       return { success: false, error: 'License server not configured correctly. Check Supabase env vars and redeploy.' };
@@ -278,7 +297,9 @@ export async function deactivateLicense(): Promise<void> {
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
     const machineId = getElectronMachineId() || await getMachineId();
 
-    const { data } = await supabase.from('license_keys').select('device_ids').eq('key', cache.key).single();
+    const { data } = (await withTimeout(
+      supabase.from('license_keys').select('device_ids').eq('key', cache.key).single()
+    )) as { data: any };
     if (data) {
       const updated = (data.device_ids ?? []).filter((id: string) => id !== machineId);
       await supabase.from('license_keys').update({ device_ids: updated }).eq('key', cache.key);
