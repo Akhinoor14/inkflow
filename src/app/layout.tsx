@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const notoSansBengali = Noto_Sans_Bengali({ subsets: ['bengali'], variable: '--font-bengali' });
 
 export const metadata: Metadata = {
-  title: 'Foylx Note — Digital Notebook',
-  description: 'Powerful local-first digital notebook with handwriting, OCR, and Google Drive sync',
+  title: 'Foylx Note - Digital Notebook with Handwriting & OCR',
+  description: 'Foylx Note is a local-first digital notebook for handwriting, OCR, audio-linked notes, and Google Drive sync.',
   manifest: '/manifest.json',
 };
 
