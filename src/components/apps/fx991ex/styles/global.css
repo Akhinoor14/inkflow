@@ -1,0 +1,66 @@
+/* ===== fx-991EX ClassWiz — Global Styles ===== */
+:root {
+  --calc-body: #1c1c1e;
+  --calc-body-mid: #242426;
+  --calc-accent: #2a2a2e;
+  --lcd-bg: #8fa888;
+  --lcd-dark: #1a2a1a;
+  --lcd-shadow: #6a7f65;
+  --key-white: #e8e8e8;
+  --key-white-press: #c8c8c8;
+  --key-blue: #1a4a8a;
+  --key-blue-press: #0f3060;
+  --key-orange: #d4640a;
+  --key-orange-press: #a04808;
+  --key-gray: #3a3a3c;
+  --key-gray-press: #2a2a2c;
+  --key-red: #cc2200;
+  --key-equals: #d4640a;
+  --shift-yellow: #f0c030;
+  --alpha-red: #e03030;
+  --text-white: #f0f0f0;
+  --text-dark: #111;
+  --solar-blue: #3a5a8a;
+  --brand-blue: #1a6abf;
+  --shadow-deep: 0 8px 32px rgba(0,0,0,0.7);
+  --font-display: 'Share Tech Mono', monospace;
+  --font-label: 'Rajdhani', sans-serif;
+  --font-brand: 'Orbitron', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #111;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 16px 0 32px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #111; }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+
+/* KaTeX math rendering */
+.katex { font-size: 1em !important; }
+.katex-display { margin: 0 !important; }
