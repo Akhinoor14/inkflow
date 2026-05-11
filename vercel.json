@@ -1,0 +1,8 @@
+{
+  "projectSettings": {
+    "nodeVersion": "20.x"
+  },
+  "env": {
+    "NEXTAUTH_URL": "@nextauth_url"
+  }
+}
