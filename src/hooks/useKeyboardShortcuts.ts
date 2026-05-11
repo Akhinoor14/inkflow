@@ -59,6 +59,15 @@ export function useKeyboardShortcuts() {
         store.resetTransform();
         return;
       }
+
+      // Tool shortcuts (skip if typing in input)
+      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') return;
+      const toolMap: Record<string,string> = {
+        p:'pen', h:'highlighter', e:'eraser', s:'select', t:'text', l:'lasso', v:'pan', q:'shape',
+      };
+      if (!ctrl && !e.shiftKey && e.key.length===1 && toolMap[e.key.toLowerCase()]) {
+        store.setActiveTool(toolMap[e.key.toLowerCase()] as any);
+      }
     };
 
     window.addEventListener('keydown', handler);

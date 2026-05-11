@@ -1,11 +1,11 @@
 'use client';
-// src/components/sidebar/Sidebar.tsx  (Session 4 — with Calculator app)
+// src/components/sidebar/Sidebar.tsx  (Session 4 — drag reorder + context menu)
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAppStore, useActiveNotebook } from '@/store/useAppStore';
 import {
   BookOpen, Plus, Trash2, ChevronRight, ChevronDown,
-  Moon, Sun, Settings, Calculator, Cloud,
+  Moon, Sun, Settings, Calculator, Cloud, GripVertical, Edit2, Check,
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { SyncIndicator } from './SyncIndicator';
@@ -18,7 +18,7 @@ export function Sidebar() {
     notebooks, pages, activeNotebookId, activePageId,
     isSidebarOpen, isDarkMode,
     createNotebook, createPage, deletePage, deleteNotebook,
-    setActiveNotebook, setActivePage, toggleDarkMode,
+    setActiveNotebook, setActivePage, toggleDarkMode, reorderPages, updateNotebook,
   } = useAppStore();
 
   const [expandedNbs, setExpandedNbs] = useState<Set<string>>(
@@ -27,6 +27,10 @@ export function Sidebar() {
   const [showCalc, setShowCalc] = useState(false);
   const [showDrive, setShowDrive] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [editingNb, setEditingNb] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const dragPage = useRef<{pageId:string;nbId:string}|null>(null);
+  const [dragOverId, setDragOverId] = useState<string|null>(null);
 
   if (!isSidebarOpen) return null;
 
@@ -46,8 +50,8 @@ export function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🖊</span>
-            <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">InkFlow</span>
+            <img src="/logo.svg" alt="" className="w-6 h-6 rounded-md flex-shrink-0" />
+            <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">Foylx Note</span>
           </div>
           <div className="flex items-center gap-0.5">
             <SyncIndicator />
@@ -96,13 +100,43 @@ export function Sidebar() {
                   )}
                   onClick={() => { setActiveNotebook(nb.id); toggleNb(nb.id); }}
                 >
-                  <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: nb.coverColor }} />
-                  <span className={clsx('flex-1 text-sm truncate',
-                    isActive ? 'font-medium text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300')}>
-                    {nb.title}
-                  </span>
-                  <span className="text-xs text-gray-400">{nbPages.length}</span>
+                  {/* Cover color dot — click to change */}
+                  <input
+                    type="color" value={nb.coverColor}
+                    title="Notebook color"
+                    onChange={e => updateNotebook(nb.id, { coverColor: e.target.value })}
+                    onClick={e => e.stopPropagation()}
+                    className="w-4 h-4 rounded-sm cursor-pointer border-0 p-0 flex-shrink-0"
+                    style={{ background: nb.coverColor }}
+                  />
+
+                  {/* Editable title */}
+                  {editingNb === nb.id ? (
+                    <input
+                      autoFocus
+                      value={editTitle}
+                      onChange={e => setEditTitle(e.target.value)}
+                      onBlur={() => { updateNotebook(nb.id, { title: editTitle || nb.title }); setEditingNb(null); }}
+                      onKeyDown={e => { if (e.key === 'Enter') { updateNotebook(nb.id, { title: editTitle || nb.title }); setEditingNb(null); } e.stopPropagation(); }}
+                      onClick={e => e.stopPropagation()}
+                      className="flex-1 text-sm bg-transparent border-b border-blue-400 outline-none text-gray-800 dark:text-gray-200"
+                    />
+                  ) : (
+                    <span className={clsx('flex-1 text-sm truncate',
+                      isActive ? 'font-medium text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300')}>
+                      {nb.title}
+                    </span>
+                  )}
+
+                  <span className="text-xs text-gray-400 flex-shrink-0">{nbPages.length}</span>
                   {isExpanded ? <ChevronDown size={12} className="text-gray-400" /> : <ChevronRight size={12} className="text-gray-400" />}
+                  <button
+                    onClick={e => { e.stopPropagation(); setEditingNb(nb.id); setEditTitle(nb.title); }}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-blue-500"
+                    title="Rename"
+                  >
+                    <Edit2 size={10} />
+                  </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteNotebook(nb.id); }}
                     className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500"
@@ -116,15 +150,31 @@ export function Sidebar() {
                     {nbPages.map((page, idx) => (
                       <div
                         key={page.id}
+                        draggable
+                        onDragStart={() => { dragPage.current = {pageId:page.id,nbId:nb.id}; }}
+                        onDragOver={(e) => { e.preventDefault(); setDragOverId(page.id); }}
+                        onDragLeave={() => setDragOverId(null)}
+                        onDrop={(e) => {
+                          e.preventDefault(); setDragOverId(null);
+                          if(!dragPage.current||dragPage.current.nbId!==nb.id) return;
+                          const ids=nbPages.map(p=>p.id);
+                          const from=ids.indexOf(dragPage.current.pageId);
+                          const to=ids.indexOf(page.id);
+                          if(from<0||to<0||from===to) return;
+                          ids.splice(from,1); ids.splice(to,0,dragPage.current.pageId);
+                          reorderPages(nb.id,ids);
+                          dragPage.current=null;
+                        }}
                         className={clsx(
                           'flex items-center gap-1.5 px-2 py-1 my-0.5 rounded-md cursor-pointer group text-xs',
                           activePageId === page.id
                             ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 font-medium'
-                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800',
+                          dragOverId===page.id && 'border-t-2 border-blue-400'
                         )}
                         onClick={() => { setActiveNotebook(nb.id); setActivePage(page.id); }}
                       >
-                        {/* Thumbnail */}
+                        <GripVertical size={10} className="opacity-0 group-hover:opacity-40 cursor-grab flex-shrink-0" />
                         {page.thumbnail ? (
                           <img src={page.thumbnail} alt="" className="w-6 h-4 object-cover rounded flex-shrink-0 border border-gray-200 dark:border-gray-700" />
                         ) : (

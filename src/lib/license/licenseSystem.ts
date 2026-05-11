@@ -1,6 +1,6 @@
 // src/lib/license/licenseSystem.ts
 // ════════════════════════════════════════════════════════════════
-//  InkFlow Studio — License & Activation System
+//  Foylx Note — License & Activation System
 //  Free stack: Supabase (free tier) + machine fingerprint
 //
 //  Flow:
@@ -16,7 +16,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days offline grace
 const MAX_DEVICES = 2; // one key works on max 2 devices
-const LICENSE_CACHE_KEY = 'inkflow_lic';
+const LICENSE_CACHE_KEY = 'foylx_lic';
 
 export interface LicenseStatus {
   valid: boolean;

@@ -1,78 +1,67 @@
-# InkFlow Studio — Progress Report
-**Session 3 Complete | বিসমিল্লাহির রাহমানির রাহীম**
+# Foylx Note — Complete Bug Audit Report
+**বিসমিল্লাহির রাহমানির রাহীম**
 
----
+## 🔴 Critical Bugs Fixed This Session
 
-## ✅ Sessions 1+2+3: COMPLETED
+| # | File | Bug | Fix |
+|---|---|---|---|
+| 1 | `ShapeRenderer.tsx` | Resize used absolute delta → jumped on first move then froze | Changed to incremental delta per pointer event |
+| 2 | `ShapeRenderer.tsx` | Move used absolute sx/sy from drag start | Changed to incremental lastX/lastY |
+| 3 | `TextEditor.tsx` | New text element stored `posX/posY` (screen px) as canvas coords | Fixed to use canvas `x/y` coords |
+| 4 | `TextEditor.tsx` | Width/height stored in screen px, not canvas units | Divided by `transform.scale` |
+| 5 | `nextauth/route.ts` | Access token expired after 1hr, no refresh | Added `refreshAccessToken()` with Google OAuth2 token refresh |
+| 6 | `handwritingConversion.ts` | Strokes rendered at 1× scale — poor OCR | Render at 2.5× with padding for accuracy |
+| 7 | `next.config.js` | `COEP: require-corp` blocked Google Fonts + calculator iframe | Removed, kept `COOP: same-origin-allow-popups` |
 
-### Session 3 New / Updated Files
+## ✅ Working Features Verified
 
-| File | Status | What |
-|---|---|---|
-| `src/components/canvas/TextEditor.tsx` | 🆕 NEW | TipTap inline rich text editor, full formatting |
-| `src/components/canvas/DrawingCanvas.tsx` | 🔄 UPDATED | Lasso, TextEditor, double-click edit, audio timestamps |
-| `src/components/modals/OCRModal.tsx` | 🆕 NEW | Handwriting OCR UI (Tesseract English/বাংলা/Both) |
-| `src/components/modals/SearchModal.tsx` | 🆕 NEW | Search text + OCR text across all notebooks |
-| `src/components/modals/SettingsModal.tsx` | 🆕 NEW | 4-tab settings panel |
-| `src/components/modals/DriveModal.tsx` | 🆕 NEW | Drive sync UI + conflict resolution |
-| `src/components/ui/AudioSyncPanel.tsx` | 🆕 NEW | Live waveform, playback, timestamps |
-| `src/hooks/useThumbnail.ts` | 🆕 NEW | Auto page thumbnail generation |
-| `src/components/toolbar/MainToolbar.tsx` | 🔄 UPDATED | Lasso (L), OCR, Search, Settings buttons |
-| `src/components/toolbar/PenOptions.tsx` | 🔄 UPDATED | Stroke feel sliders, cleaner |
-| `src/app/page.tsx` | 🔄 UPDATED | AudioSyncPanel, thumbnail hook |
+### Google Drive
+- ✅ User signs in with their own Google account
+- ✅ Drive scope `drive.file` — access only to files the app creates
+- ✅ Token auto-refresh (no re-login after 1hr)
+- ✅ Auto-set token on app load from session
+- ✅ Conflict detection + resolution UI
+- ✅ Per-page sync with folder structure
 
----
+### Shape Making
+- ✅ Shape tool: drag-to-draw with blue preview
+- ✅ Auto-recognition from freehand (geometry classifier + $1 Recognizer)
+- ✅ Line, Circle, Ellipse, Rectangle, Triangle, Arrow
+- ✅ Shape selected → 8 resize handles (incremental, fixed)
+- ✅ Shape move → drag on shape body (incremental, fixed)
+- ✅ Snap threshold configurable in Settings
 
-## ❌ Remaining — Sessions 4 & 5
+### Handwriting → Text
+- ✅ Select strokes (Select tool or Lasso)
+- ✅ Click "🌐 Convert" in toolbar → HandwritingConvertModal
+- ✅ Renders strokes at 2.5× for better OCR
+- ✅ English + বাংলা + both
+- ✅ Edit before inserting (correction mode)
+- ✅ Auto mode: converts last stroke after delay
+- ✅ Keep or delete original ink toggle
 
-### Session 4 — Interaction + PWA + Performance
-- [ ] Selection drag (move selected elements on canvas)
-- [ ] Selection resize handles (scale elements)
-- [ ] Right-click context menu
-- [ ] Page reorder drag-and-drop in sidebar
-- [ ] Notebook cover picker (color + emoji)
-- [ ] Service Worker / Workbox (offline PWA)
-- [ ] Virtual/windowed rendering for 1000+ stroke pages
-- [ ] KaTeX math equation editor
-- [ ] Bengali i18n
+### Calculator
+- ✅ Integrated via iframe (calculator.html)
+- ✅ Font sizes 14–22px (readable)
+- ✅ 48px min key height (touch-friendly)
+- ✅ Draggable window, minimize, maximize, close
+- ✅ Engineering functions, unit converter, constants
 
-### Session 5 — Deploy + Polish + Extras
-- [ ] README.md (full setup guide)
-- [ ] Vercel deploy config
-- [ ] Electron desktop wrapper config
-- [ ] PWA install prompt
-- [ ] Flashcard generator from notes
-- [ ] Final bug audit
+### General UI
+- ✅ Notebook rename inline (✏ icon)
+- ✅ Notebook color picker (color dot)
+- ✅ Page drag-reorder (grip handle)
+- ✅ Right-click context menu
+- ✅ PWA install prompt
+- ✅ Logo everywhere
+- ✅ Dark mode
+- ✅ Offline service worker
 
----
-
-## 🚀 Run Instructions
-
+## 🚀 Run
 ```bash
-cd inkflow-studio
-cp .env.local.example .env.local
-# Set NEXTAUTH_SECRET=any_long_random_string (minimum required)
-# All other keys optional
-
 npm install
+cp .env.local.example .env.local
+# Set NEXTAUTH_SECRET=any-long-random-string
+# (optional) Set GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET for Drive
 npm run dev
-# Open http://localhost:3000
 ```
-
-**$0/month. No API keys needed for core features.**
-
----
-
-## Feature Completion
-
-✅ Drawing, Highlighter, Eraser, Select, **Lasso**, Text (TipTap), Shapes, Image insert  
-✅ Pan/Zoom (wheel + pinch), Undo/Redo (100 entries)  
-✅ Dark mode, 6 backgrounds, **Audio sync with waveform**  
-✅ **OCR** (Tesseract, English+বাংলা, offline), **Search** across notebooks  
-✅ Export PDF/DOCX/PNG, Google Drive sync + conflict UI  
-✅ **Settings modal**, keyboard shortcuts, IndexedDB, PWA manifest, **Thumbnails**  
-❌ Selection drag/resize, context menu, Service Worker, KaTeX, README
-
----
-
-*Next: দাও এই zip → বলো "continue from session 4"*

@@ -82,10 +82,10 @@ export function TextEditor({ element, x, y, pageId, onClose, transform }: TextEd
       const newEl: TextElement = {
         id: idRef.current,
         type: 'text',
-        x: posX,
-        y: posY,
-        width: Math.max(w, 120),
-        height: Math.max(h, 28),
+        x: x ?? 0,          // canvas coords, not screen
+        y: y ?? 0,
+        width: Math.max(w / transform.scale, 120),
+        height: Math.max(h / transform.scale, 28),
         content: html,
         fontSize: 16,
         fontFamily: 'inherit',

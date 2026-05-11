@@ -1,6 +1,6 @@
 /* ===== Calculator Body ===== */
 .calculator {
-  width: 360px;
+  width: clamp(300px, 90vw, 420px);
   background: linear-gradient(180deg, #232325 0%, #1a1a1c 40%, #141416 100%);
   border-radius: 16px 16px 20px 20px;
   box-shadow:
@@ -24,7 +24,7 @@
 
 .calc-brand {
   font-family: var(--font-brand);
-  font-size: 9px;
+  font-size: 15px;
   color: #a0a0a8;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -32,7 +32,7 @@
 
 .calc-model {
   font-family: var(--font-brand);
-  font-size: 11px;
+  font-size: 15px;
   color: #5a8fd0;
   letter-spacing: 1px;
   font-weight: 700;
@@ -40,7 +40,7 @@
 
 .calc-classwiz {
   font-family: var(--font-brand);
-  font-size: 8px;
+  font-size: 15px;
   color: #6a9ad8;
   letter-spacing: 3px;
 }
@@ -128,7 +128,7 @@
 
 .status-icon {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 15px;
   color: var(--lcd-dark);
   opacity: 0.4;
   letter-spacing: 0.5px;
@@ -152,7 +152,7 @@
 /* Input line */
 .display-input {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 15px;
   color: var(--lcd-dark);
   min-height: 22px;
   line-height: 1.4;
@@ -163,7 +163,7 @@
   max-width: 100%;
 }
 
-.display-input.small { font-size: 10px; }
+.display-input.small { font-size: 15px; }
 .display-input.has-cursor::after {
   content: '|';
   animation: blink 1s infinite;
@@ -178,7 +178,7 @@
 /* Result line */
 .display-result {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 22px;
   color: var(--lcd-dark);
   text-align: right;
   line-height: 1.2;
@@ -188,12 +188,12 @@
 }
 
 .display-result.small { font-size: 14px; }
-.display-result.error { color: #8a1a00; font-size: 12px; }
+.display-result.error { color: #8a1a00; font-size: 14px; }
 
 /* Mode indicator */
 .display-mode-tag {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 15px;
   color: var(--lcd-dark);
   opacity: 0.7;
   position: absolute;
@@ -221,7 +221,7 @@
 
 .mode-strip-btn {
   font-family: var(--font-label);
-  font-size: 9px;
+  font-size: 15px;
   font-weight: 600;
   color: #7a7a8a;
   background: transparent;
@@ -255,6 +255,9 @@
   justify-content: flex-end;
   cursor: pointer;
   border-radius: 4px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.06s, box-shadow 0.06s, filter 0.06s;
   flex-shrink: 0;
 }
@@ -267,7 +270,7 @@
 /* Secondary labels (above key) */
 .key-shift-label {
   font-family: var(--font-label);
-  font-size: 7px;
+  font-size: 15px;
   color: var(--shift-yellow);
   text-align: center;
   line-height: 1.1;
@@ -279,7 +282,7 @@
 
 .key-alpha-label {
   font-family: var(--font-label);
-  font-size: 7px;
+  font-size: 15px;
   color: var(--alpha-red);
   text-align: center;
   line-height: 1.1;
@@ -306,7 +309,7 @@
 
 .key-main-label {
   font-family: var(--font-label);
-  font-size: 10px;
+  font-size: 15px;
   font-weight: 600;
   text-align: center;
   line-height: 1.1;
@@ -315,7 +318,7 @@
 
 .key-sub-label {
   font-family: var(--font-label);
-  font-size: 7px;
+  font-size: 15px;
   color: rgba(255,255,255,0.55);
   text-align: center;
   margin-top: 1px;
@@ -375,7 +378,7 @@
 
 .menu-title {
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 15px;
   color: var(--lcd-dark);
   text-align: center;
   margin-bottom: 8px;
@@ -411,14 +414,14 @@
 
 .menu-num {
   font-family: var(--font-display);
-  font-size: 7px;
+  font-size: 15px;
   color: var(--lcd-dark);
   opacity: 0.6;
 }
 
 .menu-name {
   font-family: var(--font-display);
-  font-size: 7px;
+  font-size: 15px;
   color: var(--lcd-dark);
   text-align: center;
   line-height: 1.2;
@@ -433,11 +436,11 @@
   min-height: 88px;
   font-family: var(--font-display);
   color: var(--lcd-dark);
-  font-size: 10px;
+  font-size: 15px;
 }
 
 .mode-header {
-  font-size: 8px;
+  font-size: 15px;
   letter-spacing: 2px;
   opacity: 0.7;
   border-bottom: 1px solid rgba(26,42,26,0.3);
@@ -460,7 +463,7 @@
   border: 1px solid rgba(26,42,26,0.4);
   border-radius: 2px;
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 15px;
   color: var(--lcd-dark);
   text-align: center;
   outline: none;
@@ -477,7 +480,7 @@
   align-items: center;
   gap: 4px;
   margin-bottom: 4px;
-  font-size: 9px;
+  font-size: 15px;
 }
 
 .eq-field {
@@ -486,7 +489,7 @@
   border: none;
   border-bottom: 1px solid rgba(26,42,26,0.5);
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 15px;
   color: var(--lcd-dark);
   text-align: center;
   outline: none;
@@ -494,7 +497,7 @@
 
 /* Stats display */
 .stat-table {
-  font-size: 8px;
+  font-size: 15px;
   width: 100%;
 }
 
@@ -507,7 +510,7 @@
 
 /* Distribution result */
 .dist-result {
-  font-size: 12px;
+  font-size: 14px;
   text-align: right;
   font-weight: bold;
   margin-top: 6px;
@@ -518,7 +521,7 @@
   display: grid;
   grid-template-columns: 20px repeat(5, 1fr);
   gap: 1px;
-  font-size: 7px;
+  font-size: 15px;
 }
 
 .ss-cell {
@@ -540,7 +543,7 @@
   background: transparent;
   border: none;
   font-family: var(--font-display);
-  font-size: 7px;
+  font-size: 15px;
   color: var(--lcd-dark);
   outline: none;
   text-align: center;
@@ -571,7 +574,7 @@
 
 .conv-title {
   font-family: var(--font-brand);
-  font-size: 12px;
+  font-size: 14px;
   color: #5a8fd0;
   text-align: center;
   margin-bottom: 12px;
@@ -584,7 +587,7 @@
 
 .conv-cat-name {
   font-family: var(--font-label);
-  font-size: 10px;
+  font-size: 15px;
   color: #d4640a;
   font-weight: 700;
   margin-bottom: 4px;
@@ -607,7 +610,7 @@
   border-radius: 4px;
   color: #e0e0e0;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 15px;
   padding: 4px 6px;
   outline: none;
 }
@@ -619,14 +622,14 @@
   border-radius: 4px;
   color: #e0e0e0;
   font-family: var(--font-label);
-  font-size: 10px;
+  font-size: 15px;
   padding: 4px;
   outline: none;
 }
 
 .conv-result {
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: 14px;
   color: #5adf5a;
   padding: 4px;
   min-width: 80px;
@@ -643,7 +646,7 @@
   border: none;
   border-radius: 6px;
   font-family: var(--font-label);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   letter-spacing: 1px;
@@ -661,7 +664,7 @@
 
 .history-item {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 15px;
   color: var(--lcd-dark);
   opacity: 0.6;
   display: flex;

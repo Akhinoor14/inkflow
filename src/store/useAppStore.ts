@@ -59,6 +59,9 @@ interface AppState {
 
   // Preferences
   preferences: UserPreferences;
+
+  // Handwriting conversion settings
+  handwritingSettings: import('@/lib/ocr/handwritingConversion').HandwritingSettings;
 }
 
 interface AppActions {
@@ -118,6 +121,7 @@ interface AppActions {
 
   // Preferences
   updatePreferences: (prefs: Partial<UserPreferences>) => void;
+  setHandwritingSettings: (s: import('@/lib/ocr/handwritingConversion').HandwritingSettings) => void;
 
   // Bulk load (from IndexedDB)
   loadNotebooks: (notebooks: Notebook[]) => void;
@@ -185,6 +189,19 @@ export const useAppStore = create<AppState & AppActions>()(
     audioDuration: 0,
     syncStatus: { status: 'idle' },
     preferences: defaultPreferences,
+    handwritingSettings: {
+      conversionMode: 'manual' as const,
+      language: 'eng+ben' as const,
+      autoConvertDelay: 1500,
+      shapeAutoConvert: true,
+      geometrySnapThreshold: 0.72,
+      keepOriginalStroke: false,
+      fontSize: 16,
+      fontFamily: 'Noto Sans Bengali, sans-serif',
+      textColor: '#1a1a1a',
+      showConfidence: true,
+      correctionMode: true,
+    },
 
     // Auth
     setUser: (user) => set((s) => { s.user = user; }),
@@ -429,6 +446,7 @@ export const useAppStore = create<AppState & AppActions>()(
 
     // Preferences
     updatePreferences: (prefs) => set((s) => { Object.assign(s.preferences, prefs); }),
+    setHandwritingSettings: (hs) => set((s) => { s.handwritingSettings = hs; }),
 
     // Bulk load
     loadNotebooks: (notebooks) => set((s) => {

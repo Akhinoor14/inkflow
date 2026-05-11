@@ -9,8 +9,8 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🖊</div>
-          <h1 className="text-2xl font-bold text-gray-900">InkFlow Studio</h1>
+          <img src="/logo.svg" alt="Foylx Note" className="w-16 h-16 mx-auto mb-3 rounded-2xl shadow-lg" />
+          <h1 className="text-2xl font-bold text-gray-900">Foylx Note</h1>
           <p className="text-gray-500 text-sm mt-1">Your digital notebook, reimagined</p>
         </div>
 

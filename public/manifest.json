@@ -1,25 +1,17 @@
 {
-  "name": "InkFlow Studio",
-  "short_name": "InkFlow",
-  "description": "Local-first digital notebook with handwriting and Google Drive sync",
+  "name": "Foylx Note",
+  "short_name": "Foylx",
+  "description": "Local-first digital notebook with handwriting, OCR, audio sync and Google Drive backup",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#1e40af",
   "theme_color": "#3b82f6",
   "orientation": "any",
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml" }
   ],
   "categories": ["productivity", "education"],
-  "shortcuts": [
-    {
-      "name": "New Notebook",
-      "short_name": "New",
-      "description": "Create a new notebook",
-      "url": "/?new=true",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
-    }
-  ]
+  "screenshots": []
 }

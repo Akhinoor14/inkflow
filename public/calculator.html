@@ -3,228 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>InkFlow Engineering Calculator</title>
+<title>Foylx Note — Engineering Calculator</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c0e14;--panel:#13161e;--panel2:#1a1e28;--panel3:#1f2433;
-  --border:#252d3d;--border2:#2e3a50;
-  --amber:#f5a623;--amber2:#ffd166;--amber-dim:#7a520f;
-  --blue:#4a9eff;--green:#3ddc84;--red:#ff5c5c;--purple:#b388ff;
-  --cyan:#00d4ff;--pink:#ff6eb4;
-  --txt:#e8edf8;--txt2:#8892a8;--txt3:#3d4a60;
-  --lcd:#b8e864;--lcd-dim:#4a6a18;--lcd-hi:#d4f070;
-  --k-num:#1a2035;--k-op:#0e1d3a;--k-fn:#111620;--k-amber:#1e1200;
+  --bg:#0d1117; --panel:#161b22; --panel2:#21262d; --panel3:#2d333b;
+  --border:#30363d; --border2:#444c56;
+  --amber:#f0a72b; --amber2:#ffd166; --amber-dim:#6b4a10;
+  --blue:#58a6ff; --green:#3fb950; --red:#f85149; --purple:#d2a8ff;
+  --cyan:#79c0ff; --pink:#ff7eb6;
+  --txt:#e6edf3; --txt2:#8b949e; --txt3:#484f58;
+  --lcd:#b8e864; --lcd-dim:#3d5a10; --lcd-bg:#0a0f04;
+  --k-num:#1c2128; --k-op:#162032; --k-fn:#16181d;
+  --r:8px; --rk:7px;
   --font-mono:'JetBrains Mono',monospace;
   --font-ui:'Rajdhani',sans-serif;
-  --font-brand:'Orbitron',sans-serif;
-  --r:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{background:var(--bg);height:100%;font-family:var(--font-ui);overflow:hidden;}
+html,body{background:var(--bg);height:100%;font-family:var(--font-ui);overflow:hidden;color:var(--txt);}
 .app{display:flex;height:100vh;}
 
-/* ── SIDEBAR ── */
-.sidebar{width:50px;background:var(--panel);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:3px;flex-shrink:0;}
-.sb-btn{width:38px;height:44px;border:none;background:transparent;border-radius:7px;
+/* SIDEBAR */
+.sidebar{
+  width:52px;background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;padding:10px 0;gap:2px;flex-shrink:0;
+}
+.sb-btn{
+  width:40px;height:46px;border:none;background:transparent;border-radius:9px;
   cursor:pointer;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;gap:2px;color:var(--txt3);transition:all .12s;}
+  justify-content:center;gap:3px;color:var(--txt3);transition:all .15s;
+}
 .sb-btn:hover{background:var(--panel2);color:var(--txt2);}
-.sb-btn.active{background:rgba(245,166,35,.12);color:var(--amber);}
-.sb-icon{font-size:15px;line-height:1;}
-.sb-lbl{font-size:6px;font-weight:700;letter-spacing:.5px;}
+.sb-btn.active{background:rgba(240,167,43,.14);color:var(--amber);}
+.sb-icon{font-size:19px;line-height:1;}
+.sb-lbl{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
 
-/* ── MAIN ── */
+/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 
-/* ── DISPLAY ── */
-.disp-wrap{background:#06080d;border-bottom:1px solid var(--border);flex-shrink:0;}
-.disp-inner{padding:9px 13px 10px;position:relative;min-height:122px;}
-.disp-inner::after{content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);
-  pointer-events:none;z-index:0;}
-.status-bar{display:flex;justify-content:space-between;height:14px;margin-bottom:4px;position:relative;z-index:1;}
-.status-l,.status-r{display:flex;gap:4px;align-items:center;}
-.ind{font-family:var(--font-ui);font-size:8px;font-weight:700;color:var(--txt3);
-  letter-spacing:.5px;opacity:0;transition:opacity .12s;padding:1px 4px;border-radius:2px;}
-.ind.on{opacity:1;}
-.ind.S.on{color:var(--amber);background:rgba(245,166,35,.1);}
-.ind.A.on{color:#e84393;background:rgba(232,67,147,.1);}
-.ind.H.on{color:var(--green);background:rgba(61,220,132,.1);}
-.ind.M.on{color:var(--blue);background:rgba(74,158,255,.1);}
-.ind.FMT.on{color:var(--purple);}
-.ang-badge{font-size:8px;font-weight:700;color:var(--amber);cursor:pointer;
-  padding:2px 7px;border:1px solid rgba(245,166,35,.25);border-radius:3px;transition:background .12s;}
-.ang-badge:hover{background:rgba(245,166,35,.1);}
-.expr-line{font-family:var(--font-mono);font-size:10.5px;color:var(--lcd-dim);
-  text-align:right;min-height:15px;word-break:break-all;position:relative;z-index:1;margin-bottom:4px;}
-.res-line{font-family:var(--font-mono);font-size:30px;font-weight:500;color:var(--lcd);
-  text-align:right;min-height:37px;line-height:1.15;position:relative;z-index:1;
-  word-break:break-all;transition:all .1s;text-shadow:0 0 22px rgba(184,232,100,.22);}
-.res-line.sm{font-size:18px;} .res-line.xs{font-size:13px;}
-.res-line.err{color:var(--red);font-size:15px;text-shadow:0 0 18px rgba(255,92,92,.3);}
-.sub-line{font-family:var(--font-mono);font-size:10.5px;text-align:right;
-  min-height:13px;position:relative;z-index:1;margin-top:2px;display:flex;gap:8px;justify-content:flex-end;}
-.sub-frac{color:var(--amber);} .sub-eng{color:var(--cyan);}
-.fbar{display:flex;align-items:center;gap:6px;padding:5px 10px;
-  background:rgba(255,255,255,.018);border-top:1px solid var(--border);flex-shrink:0;}
-.fbar input{flex:1;background:transparent;border:none;outline:none;
-  font-family:var(--font-mono);font-size:12px;color:var(--lcd);caret-color:var(--amber);
-  -webkit-user-select:auto;user-select:auto;}
-.fbar input::placeholder{color:var(--txt3);}
-.fbar-icon{color:var(--amber-dim);font-size:12px;font-family:var(--font-brand);}
+/* DISPLAY */
+.disp-wrap{background:var(--lcd-bg);border-bottom:1px solid var(--border);flex-shrink:0;}
+.disp-inner{padding:10px 14px 11px;position:relative;min-height:116px;}
+/* CRT scanline effect */
+.disp-inner::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
+  pointer-events:none;z-index:0;
+}
+.status-bar{display:flex;justify-content:space-between;height:16px;margin-bottom:5px;position:relative;z-index:1;}
+.status-l,.status-r{display:flex;gap:5px;align-items:center;}
+.ind{
+  font-family:var(--font-ui);font-size:14px;font-weight:700;color:var(--txt3);
+  letter-spacing:.5px;opacity:0;transition:opacity .15s;padding:1px 5px;border-radius:3px;
+  background:rgba(255,255,255,.04);
+}
+.ind.on{opacity:1;color:var(--amber);}
+.ang-badge{
+  font-size:14px;font-weight:700;color:var(--amber);cursor:pointer;
+  background:rgba(240,167,43,.12);padding:2px 7px;border-radius:4px;
+  border:1px solid rgba(240,167,43,.25);transition:all .12s;
+}
+.ang-badge:hover{background:rgba(240,167,43,.22);}
+.expr-line{
+  font-family:var(--font-mono);font-size:16px;color:var(--lcd-dim);
+  min-height:18px;word-break:break-all;position:relative;z-index:1;line-height:1.4;
+}
+.res-line{
+  font-family:var(--font-mono);font-size:34px;font-weight:500;color:var(--lcd);
+  min-height:40px;word-break:break-all;text-align:right;
+  position:relative;z-index:1;line-height:1.2;
+  text-shadow:0 0 20px rgba(184,232,100,.25);
+}
+.res-line.sm{font-size:21px;} .res-line.xs{font-size:16px;}
+.res-line.err{color:var(--red);font-size:16px;text-shadow:0 0 18px rgba(248,81,73,.3);}
+.sub-line{
+  font-family:var(--font-mono);font-size:15px;text-align:right;
+  color:rgba(184,232,100,.45);min-height:14px;position:relative;z-index:1;
+}
+/* Input bar */
+.fbar{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:7px;padding:5px 9px;margin-top:6px;position:relative;z-index:1;
+}
+.fbar-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--font-mono);font-size:17px;color:var(--lcd);caret-color:var(--amber);
+}
+.fbar-icon{color:var(--amber-dim);font-size:16px;font-family:var(--font-ui);font-weight:700;}
 
-/* ── TABS ── */
-.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
-.tab{flex:1;padding:6px 2px;text-align:center;font-size:8.5px;font-weight:700;
-  letter-spacing:.4px;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;
-  transition:all .12s;font-family:var(--font-ui);}
-.tab:hover{color:var(--txt2);}
-.tab.active{color:var(--amber);border-bottom-color:var(--amber);}
+/* TABS */
+.tabs-bar{
+  display:flex;background:var(--panel);border-bottom:1px solid var(--border);
+  flex-shrink:0;overflow-x:auto;scrollbar-width:none;
+}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.tab{
+  flex:1;min-width:52px;padding:8px 4px;text-align:center;
+  font-size:14px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  color:var(--txt3);cursor:pointer;transition:all .15s;border-bottom:2px solid transparent;
+  user-select:none;
+}
+.tab:hover{color:var(--txt2);background:rgba(255,255,255,.03);}
+.tab.active{color:var(--amber);border-bottom-color:var(--amber);background:rgba(240,167,43,.06);}
 
-/* ── PANELS ── */
+/* PANELS */
 .panel{display:none;flex-direction:column;overflow-y:auto;flex:1;}
 .panel.active{display:flex;}
-.panel-body{padding:7px 8px 12px;display:flex;flex-direction:column;gap:4px;}
+.panel-body{padding:8px 9px 14px;display:flex;flex-direction:column;gap:5px;}
 
-/* ── KEYS ── */
-.krow{display:grid;gap:4px;}
+/* KEYS */
+.krow{display:grid;gap:5px;}
 .kr5{grid-template-columns:repeat(5,1fr);}
 .kr6{grid-template-columns:repeat(6,1fr);}
 .kr4b{grid-template-columns:2fr 1fr 1fr 2fr;}
 
-.k{position:relative;border:none;border-radius:var(--r);cursor:pointer;
+.k{
+  position:relative;border:none;border-radius:var(--rk);cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:0 2px;min-height:38px;outline:none;transition:filter .06s,transform .07s;}
-.k:active{filter:brightness(1.65);transform:scale(.9) translateY(1px);}
-.k-num{background:linear-gradient(180deg,#1a2035 0%,#111626 100%);box-shadow:0 3px 0 #05080f,inset 0 1px 0 rgba(255,255,255,.05);}
-.k-op {background:linear-gradient(180deg,#0e1d3a 0%,#080f22 100%);box-shadow:0 3px 0 #030812,inset 0 1px 0 rgba(74,158,255,.08);}
-.k-fn {background:linear-gradient(180deg,#111620 0%,#0a0d14 100%);box-shadow:0 3px 0 #040508,inset 0 1px 0 rgba(255,255,255,.03);}
-.k-amb{background:linear-gradient(180deg,#1e1200 0%,#0f0800 100%);box-shadow:0 3px 0 #050300,inset 0 1px 0 rgba(245,166,35,.12);}
-.k-eq {background:linear-gradient(135deg,#d4840a,#f0a020);box-shadow:0 3px 0 #4a2800,inset 0 1px 0 rgba(255,220,80,.15);}
-.k-ac {background:linear-gradient(135deg,#0e3060,#1a4a90);box-shadow:0 3px 0 #050e20,inset 0 1px 0 rgba(74,158,255,.12);}
-.k-del{background:linear-gradient(180deg,#250a0a 0%,#160404 100%);box-shadow:0 3px 0 #080202;}
+  padding:3px 2px;min-height:46px;outline:none;
+  transition:filter .07s,transform .08s,box-shadow .08s;
+  touch-action:manipulation;user-select:none;
+}
+.k:hover{filter:brightness(1.18);}
+.k:active{filter:brightness(1.55);transform:scale(.91) translateY(1px);box-shadow:none!important;}
 
-.km{font-weight:700;color:var(--txt);pointer-events:none;line-height:1.1;white-space:nowrap;}
-.km.op{color:#7ab8ff;} .km.eq{color:#fff;font-size:20px;}
-.km.ac{color:#7ab8ff;} .km.del{color:#ff7070;}
+.k-num{background:linear-gradient(180deg,#232b38 0%,#161d28 100%);box-shadow:0 3px 0 #090d13,inset 0 1px 0 rgba(255,255,255,.07);}
+.k-op {background:linear-gradient(180deg,#162032 0%,#0d1624 100%);box-shadow:0 3px 0 #060b12,inset 0 1px 0 rgba(88,166,255,.1);}
+.k-fn {background:linear-gradient(180deg,#1c2029 0%,#121620 100%);box-shadow:0 3px 0 #070a10,inset 0 1px 0 rgba(255,255,255,.05);}
+.k-amb{background:linear-gradient(180deg,#261a06 0%,#170f03 100%);box-shadow:0 3px 0 #080400,inset 0 1px 0 rgba(240,167,43,.14);}
+.k-eq {background:linear-gradient(135deg,#c97e09,#e8981e);box-shadow:0 3px 0 #5a3600,inset 0 1px 0 rgba(255,220,80,.18);}
+.k-ac {background:linear-gradient(135deg,#0d3262,#1a4d94);box-shadow:0 3px 0 #050f22,inset 0 1px 0 rgba(88,166,255,.15);}
+.k-del{background:linear-gradient(180deg,#2e1010 0%,#1c0909 100%);box-shadow:0 3px 0 #0a0303;}
+
+/* Key labels */
+.km{font-weight:700;color:var(--txt);pointer-events:none;line-height:1.1;white-space:nowrap;font-size:15px;}
+.km.op{color:var(--cyan);} .km.eq{color:#fff;font-size:22px;}
+.km.ac{color:var(--blue);} .km.del{color:var(--red);}
 .km.amb{color:var(--amber);} .km.grn{color:var(--green);}
 .km.pur{color:var(--purple);} .km.cyn{color:var(--cyan);}
-.km-s{font-size:6px;font-weight:600;pointer-events:none;white-space:nowrap;line-height:1;margin-bottom:1px;}
-.km-s.sh{color:var(--amber);opacity:.85;}
-.km-s.al{color:#e84393;opacity:.8;}
+.km-s{
+  font-size:13px;font-weight:600;pointer-events:none;
+  white-space:nowrap;line-height:1;margin-bottom:2px;
+}
+.km-s.sh{color:var(--amber);opacity:.9;}
+.km-s.al{color:#e84393;opacity:.85;}
 
-/* ── ENG PANEL SHARED ── */
-.eng-body{padding:8px 10px;flex:1;display:flex;flex-direction:column;gap:7px;overflow-y:auto;}
-.sec-ttl{font-size:8px;font-weight:700;letter-spacing:2px;color:var(--amber);
-  font-family:var(--font-brand);display:flex;align-items:center;gap:5px;}
-.sec-ttl::before{content:'';width:3px;height:10px;background:var(--amber);border-radius:1px;flex-shrink:0;}
-.srch{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);
-  border:1px solid var(--border2);border-radius:5px;padding:5px 9px;}
-.srch input{flex:1;background:transparent;border:none;outline:none;
-  font-family:var(--font-mono);font-size:11px;color:var(--lcd);caret-color:var(--amber);
-  -webkit-user-select:auto;user-select:auto;}
-.srch input::placeholder{color:var(--txt3);}
-.srch-ico{color:var(--txt3);font-size:11px;}
+/* Section titles */
+.sec-ttl{
+  font-size:14px;font-weight:700;letter-spacing:2px;color:var(--amber);
+  text-transform:uppercase;padding:4px 2px 3px;opacity:.75;
+}
 
-/* ── CONVERSION ── */
-.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-.ccard{background:var(--panel2);border:1px solid var(--border);border-radius:5px;
-  padding:6px 8px;cursor:pointer;transition:all .12s;}
-.ccard:hover{border-color:rgba(245,166,35,.4);background:rgba(245,166,35,.06);}
-.ccard.active{border-color:rgba(245,166,35,.6);background:rgba(245,166,35,.1);}
-.ccard-n{font-size:9.5px;font-weight:700;color:var(--txt);}
-.ccard-c{font-size:7.5px;color:var(--txt2);margin-top:1px;}
-.ctool{background:var(--panel);border:1px solid var(--border2);border-radius:6px;
-  padding:9px;display:none;}
-.ctool.open{display:block;}
-.ctool-ttl{font-size:10px;font-weight:700;color:var(--amber);margin-bottom:7px;}
-.cv-row{display:flex;align-items:center;gap:5px;margin-bottom:5px;}
-.cv-inp{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:4px;
-  padding:5px 7px;font-family:var(--font-mono);font-size:12px;color:var(--lcd);
-  outline:none;-webkit-user-select:auto;user-select:auto;}
-.cv-inp:focus{border-color:rgba(245,166,35,.5);}
-.cv-sel{flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:4px;
-  padding:4px 5px;font-family:var(--font-ui);font-size:9.5px;color:var(--txt);outline:none;cursor:pointer;}
-.cv-swap{width:100%;padding:5px;background:rgba(245,166,35,.1);border:1px solid rgba(245,166,35,.25);
-  border-radius:4px;color:var(--amber);font-size:10px;cursor:pointer;margin-bottom:5px;
-  font-family:var(--font-ui);font-weight:700;transition:background .12s;}
-.cv-swap:hover{background:rgba(245,166,35,.2);}
-.cv-all{max-height:150px;overflow-y:auto;border-top:1px solid var(--border);padding-top:5px;margin-top:3px;}
-.cv-all-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.03);}
-.cv-unit{font-size:8.5px;color:var(--txt2);font-family:var(--font-ui);}
-.cv-val{font-size:9.5px;color:var(--lcd);font-family:var(--font-mono);}
+/* Search */
+.srch-wrap{
+  display:flex;align-items:center;gap:6px;background:var(--panel2);
+  border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin-bottom:6px;
+}
+.srch-inp{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--font-mono);font-size:17px;color:var(--lcd);caret-color:var(--amber);
+}
+.srch-ico{color:var(--txt3);font-size:16px;}
 
-/* ── CONSTANTS ── */
-.const-list{display:flex;flex-direction:column;gap:3px;}
-.ci{display:flex;align-items:center;gap:7px;padding:5px 7px;
-  background:var(--panel2);border:1px solid var(--border);border-radius:5px;
-  cursor:pointer;transition:all .12s;}
-.ci:hover{border-color:rgba(245,166,35,.35);background:rgba(245,166,35,.06);}
-.ci-sym{font-family:var(--font-mono);font-size:13px;color:var(--amber);min-width:28px;text-align:center;}
-.ci-info{flex:1;min-width:0;}
-.ci-name{font-size:8.5px;font-weight:600;color:var(--txt);}
-.ci-val{font-size:8px;color:var(--lcd);font-family:var(--font-mono);margin-top:1px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ci-unit{font-size:7px;color:var(--txt2);}
-.ci-btn{font-size:7.5px;padding:2px 6px;border-radius:3px;border:none;cursor:pointer;
-  background:rgba(245,166,35,.14);color:var(--amber);font-family:var(--font-ui);font-weight:700;
-  flex-shrink:0;transition:background .12s;}
-.ci-btn:hover{background:rgba(245,166,35,.28);}
+/* Constants cards */
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ccard{
+  background:var(--panel2);border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;cursor:pointer;transition:all .15s;
+}
+.ccard:hover{border-color:var(--amber);background:rgba(240,167,43,.06);}
+.ccard:active{transform:scale(.97);}
+.ccard-s{font-size:14px;color:var(--amber);font-weight:700;font-family:var(--font-mono);margin-bottom:2px;}
+.ccard-n{font-size:14px;font-weight:600;color:var(--txt);}
+.ccard-c{font-size:13px;color:var(--txt2);margin-top:2px;}
 
-/* ── ENG TOOLS ── */
-.etool-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
-.ecard{background:var(--panel2);border:1px solid var(--border);border-radius:6px;
-  padding:7px 8px;cursor:pointer;transition:all .12s;}
-.ecard:hover{border-color:rgba(74,158,255,.4);background:rgba(74,158,255,.06);}
-.ecard-ttl{font-size:9px;font-weight:700;color:var(--blue);margin-bottom:3px;letter-spacing:.3px;}
-.ecard-desc{font-size:7.5px;color:var(--txt2);}
-.etool-box{background:var(--panel);border:1px solid var(--border2);border-radius:6px;
-  padding:9px;display:none;margin-top:4px;}
-.etool-box.open{display:block;}
-.etool-ttl{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:7px;}
-.frow{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
-.flbl{font-size:8px;color:var(--txt2);min-width:90px;font-family:var(--font-ui);flex-shrink:0;}
-.finp{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:3px;
-  padding:4px 7px;font-family:var(--font-mono);font-size:11.5px;color:var(--lcd);
-  outline:none;-webkit-user-select:auto;user-select:auto;}
-.finp:focus{border-color:rgba(74,158,255,.4);}
-.fsel{flex:1;background:var(--panel2);border:1px solid var(--border2);border-radius:3px;
-  padding:4px 5px;font-family:var(--font-ui);font-size:9px;color:var(--txt);outline:none;cursor:pointer;}
-.ftxa{width:100%;height:56px;background:var(--bg);border:1px solid var(--border2);
-  border-radius:3px;padding:5px 7px;font-family:var(--font-mono);font-size:11px;
-  color:var(--lcd);outline:none;resize:none;-webkit-user-select:auto;user-select:auto;}
-.cbtn{width:100%;padding:7px;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.28);
-  border-radius:5px;color:var(--blue);font-family:var(--font-ui);font-size:10.5px;
-  font-weight:700;letter-spacing:1px;cursor:pointer;margin:5px 0 3px;transition:background .12s;}
-.cbtn:hover{background:rgba(74,158,255,.22);}
-.eres{background:var(--bg);border:1px solid rgba(61,220,132,.2);border-radius:4px;
-  padding:7px 9px;display:none;}
-.eres.show{display:block;}
-.er-row{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.03);}
-.er-k{font-size:8.5px;color:var(--txt2);font-family:var(--font-ui);}
-.er-v{font-size:10.5px;color:var(--green);font-family:var(--font-mono);}
+/* Engineering tools */
+.ctool-ttl{font-size:14px;font-weight:700;color:var(--amber);margin-bottom:8px;letter-spacing:.5px;}
+.etool-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.etool-card{
+  background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+  padding:11px 12px;cursor:pointer;transition:all .15s;
+}
+.etool-card:hover{border-color:var(--blue);background:rgba(88,166,255,.06);}
+.etool-icon{font-size:18px;margin-bottom:4px;}
+.etool-name{font-size:14px;font-weight:700;color:var(--txt);}
+.etool-desc{font-size:13px;color:var(--txt2);margin-top:2px;}
 
-/* ── HISTORY ── */
-.hist-list{display:flex;flex-direction:column;gap:2px;}
-.hi{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;
-  border-radius:4px;cursor:pointer;border:1px solid transparent;transition:all .1s;}
-.hi:hover{background:rgba(255,255,255,.04);border-color:var(--border);}
-.hi-expr{font-family:var(--font-mono);font-size:9px;color:var(--txt2);flex:1;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hi-res{font-family:var(--font-mono);font-size:12px;color:var(--lcd);font-weight:500;margin-left:8px;white-space:nowrap;}
+/* Engineering panel inputs */
+.eng-field{margin-bottom:9px;}
+.eng-lbl{font-size:14px;color:var(--txt2);margin-bottom:3px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;}
+.eng-inp{
+  width:100%;background:var(--panel2);border:1px solid var(--border);
+  border-radius:7px;padding:7px 10px;color:var(--lcd);
+  font-family:var(--font-mono);font-size:16px;outline:none;transition:border-color .15s;
+}
+.eng-inp:focus{border-color:var(--amber);}
+.eng-sel{
+  width:100%;background:var(--panel2);border:1px solid var(--border);
+  border-radius:7px;padding:7px 10px;color:var(--txt);font-size:15px;outline:none;
+}
+.eng-btn{
+  width:100%;background:rgba(240,167,43,.15);border:1px solid rgba(240,167,43,.35);
+  border-radius:7px;padding:8px;color:var(--amber);font-weight:700;
+  font-size:15px;cursor:pointer;transition:all .15s;letter-spacing:.3px;
+}
+.eng-btn:hover{background:rgba(240,167,43,.25);}
+.eng-res{
+  background:var(--panel2);border:1px solid var(--border);border-radius:7px;
+  padding:9px 12px;font-family:var(--font-mono);font-size:18px;color:var(--lcd);
+  min-height:38px;word-break:break-all;
+}
 
-/* ── TOAST ── */
-.toast{position:fixed;bottom:14px;left:50%;transform:translateX(-50%) translateY(60px);
-  background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.35);color:var(--amber);
-  font-family:var(--font-ui);font-size:10.5px;font-weight:700;padding:6px 14px;
-  border-radius:20px;transition:transform .2s;pointer-events:none;z-index:999;
-  white-space:nowrap;backdrop-filter:blur(10px);}
-.toast.show{transform:translateX(-50%) translateY(0);}
+/* History */
+.hist-item{
+  background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:9px 11px;cursor:pointer;transition:all .12s;margin-bottom:4px;
+}
+.hist-item:hover{border-color:var(--amber);}
+.hist-expr{font-family:var(--font-mono);font-size:15px;color:var(--txt2);}
+.hist-res{font-family:var(--font-mono);font-size:18px;color:var(--lcd);font-weight:500;}
+.hist-empty{text-align:center;color:var(--txt3);font-size:15px;padding:30px 0;}
 
-::-webkit-scrollbar{width:3px;} ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:#252d3d;border-radius:2px;}
+/* Unit conversion */
+.conv-wrap{display:flex;flex-direction:column;gap:7px;}
+.conv-cats{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px;}
+.conv-cat{
+  font-size:14px;font-weight:700;padding:4px 10px;border-radius:20px;
+  border:1px solid var(--border);color:var(--txt2);cursor:pointer;transition:all .12s;
+  background:var(--panel2);
+}
+.conv-cat.active{background:rgba(240,167,43,.15);color:var(--amber);border-color:rgba(240,167,43,.35);}
+.conv-row{display:flex;gap:6px;align-items:flex-end;}
+.conv-half{flex:1;}
+.conv-eq{font-size:18px;color:var(--txt3);padding-bottom:6px;flex-shrink:0;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 </style>
 </head>
 <body>
@@ -287,43 +304,43 @@ html,body{background:var(--bg);height:100%;font-family:var(--font-ui);overflow:h
 
   <!-- Row 0: modifiers -->
   <div class="krow kr5">
-    <button class="k k-amb" onclick="hk('SHIFT')"><span class="km amb" style="font-size:8px;font-weight:900">SHIFT</span></button>
-    <button class="k k-amb" onclick="hk('ALPHA')"><span class="km" style="font-size:8px;font-weight:900;color:#e84393">ALPHA</span></button>
+    <button class="k k-amb" onclick="hk('SHIFT')"><span class="km amb" style="font-size:17px;font-weight:900">SHIFT</span></button>
+    <button class="k k-amb" onclick="hk('ALPHA')"><span class="km" style="font-size:17px;font-weight:900;color:#e84393">ALPHA</span></button>
     <button class="k k-fn"  onclick="hk('HYP')">
       <span class="km-s sh">SETUP</span>
-      <span class="km grn" style="font-size:8px">HYP</span></button>
-    <button class="k k-del" onclick="hk('DEL')"><span class="km del" style="font-size:9px">DEL</span></button>
-    <button class="k k-ac"  onclick="hk('AC')"><span class="km ac" style="font-size:9px">AC</span></button>
+      <span class="km grn" style="font-size:17px">HYP</span></button>
+    <button class="k k-del" onclick="hk('DEL')"><span class="km del" style="font-size:19px">DEL</span></button>
+    <button class="k k-ac"  onclick="hk('AC')"><span class="km ac" style="font-size:19px">AC</span></button>
   </div>
 
   <!-- Row 1: trig -->
   <div class="krow kr6">
-    <button class="k k-fn" onclick="hk('SIN')"><span class="km-s sh">sin⁻¹</span><span class="km" style="font-size:9px">sin</span></button>
-    <button class="k k-fn" onclick="hk('COS')"><span class="km-s sh">cos⁻¹</span><span class="km" style="font-size:9px">cos</span></button>
-    <button class="k k-fn" onclick="hk('TAN')"><span class="km-s sh">tan⁻¹</span><span class="km" style="font-size:9px">tan</span></button>
-    <button class="k k-fn" onclick="hk('LOG')"><span class="km-s sh">10ˣ</span><span class="km" style="font-size:9px">log</span></button>
-    <button class="k k-fn" onclick="hk('LN')"><span class="km-s sh">eˣ</span><span class="km" style="font-size:9px">ln</span></button>
-    <button class="k k-fn" onclick="hk('LOGN')"><span class="km-s sh">logₐb</span><span class="km" style="font-size:8px">logₙ</span></button>
+    <button class="k k-fn" onclick="hk('SIN')"><span class="km-s sh">sin⁻¹</span><span class="km" style="font-size:19px">sin</span></button>
+    <button class="k k-fn" onclick="hk('COS')"><span class="km-s sh">cos⁻¹</span><span class="km" style="font-size:19px">cos</span></button>
+    <button class="k k-fn" onclick="hk('TAN')"><span class="km-s sh">tan⁻¹</span><span class="km" style="font-size:19px">tan</span></button>
+    <button class="k k-fn" onclick="hk('LOG')"><span class="km-s sh">10ˣ</span><span class="km" style="font-size:19px">log</span></button>
+    <button class="k k-fn" onclick="hk('LN')"><span class="km-s sh">eˣ</span><span class="km" style="font-size:19px">ln</span></button>
+    <button class="k k-fn" onclick="hk('LOGN')"><span class="km-s sh">logₐb</span><span class="km" style="font-size:17px">logₙ</span></button>
   </div>
 
   <!-- Row 2: powers/roots -->
   <div class="krow kr6">
-    <button class="k k-fn" onclick="hk('SQ')"><span class="km-s sh">√x</span><span class="km" style="font-size:9px">x²</span></button>
-    <button class="k k-fn" onclick="hk('CUBE')"><span class="km-s sh">∛x</span><span class="km" style="font-size:9px">x³</span></button>
-    <button class="k k-fn" onclick="hk('POW')"><span class="km-s sh">ⁿ√x</span><span class="km" style="font-size:9px">xⁿ</span></button>
-    <button class="k k-fn" onclick="hk('SQRT')"><span class="km-s sh">x²</span><span class="km" style="font-size:14px">√</span></button>
-    <button class="k k-fn" onclick="hk('RECIP')"><span class="km-s sh">n!</span><span class="km" style="font-size:9px">x⁻¹</span></button>
-    <button class="k k-fn" onclick="hk('ABS')"><span class="km-s sh">%</span><span class="km" style="font-size:9px">|x|</span></button>
+    <button class="k k-fn" onclick="hk('SQ')"><span class="km-s sh">√x</span><span class="km" style="font-size:19px">x²</span></button>
+    <button class="k k-fn" onclick="hk('CUBE')"><span class="km-s sh">∛x</span><span class="km" style="font-size:19px">x³</span></button>
+    <button class="k k-fn" onclick="hk('POW')"><span class="km-s sh">ⁿ√x</span><span class="km" style="font-size:19px">xⁿ</span></button>
+    <button class="k k-fn" onclick="hk('SQRT')"><span class="km-s sh">x²</span><span class="km" style="font-size:17px">√</span></button>
+    <button class="k k-fn" onclick="hk('RECIP')"><span class="km-s sh">n!</span><span class="km" style="font-size:19px">x⁻¹</span></button>
+    <button class="k k-fn" onclick="hk('ABS')"><span class="km-s sh">%</span><span class="km" style="font-size:19px">|x|</span></button>
   </div>
 
   <!-- Row 3: parens/specials -->
   <div class="krow kr6">
-    <button class="k k-fn" onclick="hk('LPAR')"><span class="km" style="font-size:17px;color:#aaa">(</span></button>
-    <button class="k k-fn" onclick="hk('RPAR')"><span class="km" style="font-size:17px;color:#aaa">)</span></button>
-    <button class="k k-fn" onclick="hk('PI')"><span class="km pur" style="font-size:15px">π</span></button>
-    <button class="k k-fn" onclick="hk('EULER')"><span class="km" style="font-size:13px;color:var(--blue)">e</span></button>
-    <button class="k k-fn" onclick="hk('FACT')"><span class="km-s sh">nPr</span><span class="km" style="font-size:10px">n!</span></button>
-    <button class="k k-fn" onclick="hk('NCR')"><span class="km-s sh">ₙCᵣ</span><span class="km" style="font-size:8.5px">nCr</span></button>
+    <button class="k k-fn" onclick="hk('LPAR')"><span class="km" style="font-size:19px;color:#aaa">(</span></button>
+    <button class="k k-fn" onclick="hk('RPAR')"><span class="km" style="font-size:19px;color:#aaa">)</span></button>
+    <button class="k k-fn" onclick="hk('PI')"><span class="km pur" style="font-size:19px">π</span></button>
+    <button class="k k-fn" onclick="hk('EULER')"><span class="km" style="font-size:16px;color:var(--blue)">e</span></button>
+    <button class="k k-fn" onclick="hk('FACT')"><span class="km-s sh">nPr</span><span class="km" style="font-size:16px">n!</span></button>
+    <button class="k k-fn" onclick="hk('NCR')"><span class="km-s sh">ₙCᵣ</span><span class="km" style="font-size:17px">nCr</span></button>
   </div>
 
   <!-- Numpad rows -->
@@ -331,38 +348,38 @@ html,body{background:var(--bg);height:100%;font-family:var(--font-ui);overflow:h
     <button class="k k-num" onclick="hk('7')"><span class="km" style="font-size:16px">7</span></button>
     <button class="k k-num" onclick="hk('8')"><span class="km" style="font-size:16px">8</span></button>
     <button class="k k-num" onclick="hk('9')"><span class="km" style="font-size:16px">9</span></button>
-    <button class="k k-op"  onclick="hk('DIV')"><span class="km op" style="font-size:17px">÷</span></button>
-    <button class="k k-op"  onclick="hk('MUL')"><span class="km op" style="font-size:17px">×</span></button>
+    <button class="k k-op"  onclick="hk('DIV')"><span class="km op" style="font-size:19px">÷</span></button>
+    <button class="k k-op"  onclick="hk('MUL')"><span class="km op" style="font-size:19px">×</span></button>
   </div>
   <div class="krow kr5">
     <button class="k k-num" onclick="hk('4')"><span class="km" style="font-size:16px">4</span></button>
     <button class="k k-num" onclick="hk('5')"><span class="km" style="font-size:16px">5</span></button>
     <button class="k k-num" onclick="hk('6')"><span class="km" style="font-size:16px">6</span></button>
-    <button class="k k-op"  onclick="hk('SUB')"><span class="km op" style="font-size:20px">−</span></button>
-    <button class="k k-fn"  onclick="hk('MOD')"><span class="km" style="font-size:8.5px;color:#aaa">mod</span></button>
+    <button class="k k-op"  onclick="hk('SUB')"><span class="km op" style="font-size:22px">−</span></button>
+    <button class="k k-fn"  onclick="hk('MOD')"><span class="km" style="font-size:17px;color:#aaa">mod</span></button>
   </div>
   <div class="krow kr5">
     <button class="k k-num" onclick="hk('1')"><span class="km" style="font-size:16px">1</span></button>
     <button class="k k-num" onclick="hk('2')"><span class="km" style="font-size:16px">2</span></button>
     <button class="k k-num" onclick="hk('3')"><span class="km" style="font-size:16px">3</span></button>
-    <button class="k k-op"  onclick="hk('ADD')"><span class="km op" style="font-size:20px">+</span></button>
-    <button class="k k-fn"  onclick="hk('EXP10')"><span class="km" style="font-size:8px;color:var(--blue)">×10ˣ</span></button>
+    <button class="k k-op"  onclick="hk('ADD')"><span class="km op" style="font-size:22px">+</span></button>
+    <button class="k k-fn"  onclick="hk('EXP10')"><span class="km" style="font-size:17px;color:var(--blue)">×10ˣ</span></button>
   </div>
   <div class="krow kr4b">
     <button class="k k-num" onclick="hk('0')"><span class="km" style="font-size:16px">0</span></button>
-    <button class="k k-num" onclick="hk('DOT')"><span class="km" style="font-size:20px">.</span></button>
-    <button class="k k-fn"  onclick="hk('ANS')"><span class="km" style="font-size:9px;color:var(--blue)">Ans</span></button>
+    <button class="k k-num" onclick="hk('DOT')"><span class="km" style="font-size:22px">.</span></button>
+    <button class="k k-fn"  onclick="hk('ANS')"><span class="km" style="font-size:19px;color:var(--blue)">Ans</span></button>
     <button class="k k-eq"  onclick="hk('EQ')"><span class="km eq">=</span></button>
   </div>
 
   <!-- Extra row -->
   <div class="krow kr6" style="margin-top:2px">
-    <button class="k k-fn" onclick="hk('NEG')"><span class="km" style="font-size:8.5px;color:#aaa">(−)</span></button>
-    <button class="k k-fn" onclick="hk('SD')"><span class="km" style="font-size:7.5px;color:#aaa">S⇔D</span></button>
-    <button class="k k-fn" onclick="hk('MPLUS')"><span class="km" style="font-size:8px;color:var(--blue)">M+</span></button>
-    <button class="k k-fn" onclick="hk('MR')"><span class="km" style="font-size:8px;color:var(--blue)">MR</span></button>
-    <button class="k k-fn" onclick="hk('MC')"><span class="km" style="font-size:8px;color:var(--red)">MC</span></button>
-    <button class="k k-amb" onclick="hk('SOLVE')"><span class="km amb" style="font-size:7.5px">SOLVE</span></button>
+    <button class="k k-fn" onclick="hk('NEG')"><span class="km" style="font-size:17px;color:#aaa">(−)</span></button>
+    <button class="k k-fn" onclick="hk('SD')"><span class="km" style="font-size:16px;color:#aaa">S⇔D</span></button>
+    <button class="k k-fn" onclick="hk('MPLUS')"><span class="km" style="font-size:17px;color:var(--blue)">M+</span></button>
+    <button class="k k-fn" onclick="hk('MR')"><span class="km" style="font-size:17px;color:var(--blue)">MR</span></button>
+    <button class="k k-fn" onclick="hk('MC')"><span class="km" style="font-size:17px;color:var(--red)">MC</span></button>
+    <button class="k k-amb" onclick="hk('SOLVE')"><span class="km amb" style="font-size:16px">SOLVE</span></button>
   </div>
 </div>
 </div><!-- /panel-calc -->
@@ -412,7 +429,7 @@ html,body{background:var(--bg);height:100%;font-family:var(--font-ui);overflow:h
 <div class="eng-body">
   <div style="display:flex;justify-content:space-between;align-items:center">
     <div class="sec-ttl">HISTORY</div>
-    <button onclick="clrHist()" style="font-size:8px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--font-ui);font-weight:700">CLEAR</button>
+    <button onclick="clrHist()" style="font-size:17px;color:var(--red);background:none;border:none;cursor:pointer;font-family:var(--font-ui);font-weight:700">CLEAR</button>
   </div>
   <div class="hist-list" id="histList"></div>
 </div>
@@ -613,7 +630,7 @@ function addHist(expr,result){
 function clrHist(){ST.hist=[];localStorage.setItem('inkf_h','[]');renderHist();}
 function renderHist(){
   const el=document.getElementById('histList');
-  if(!ST.hist.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:10px">No history yet</div>';return;}
+  if(!ST.hist.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt3);font-size:16px">No history yet</div>';return;}
   el.innerHTML=ST.hist.map((h,i)=>`
     <div class="hi" onclick="rcHist(${i})">
       <div class="hi-expr">${esc(h.expr)}</div>
@@ -740,7 +757,7 @@ const fS=(id,lbl,opts)=>`<div class="frow"><span class="flbl">${lbl}</span><sele
 const gv=id=>parseFloat(document.getElementById(id)?.value)||0;
 const fmt=v=>CalcEngine.formatNumber(v);
 
-function eOhms(){mkTool('⚡ Ohm\'s Law',`<div style="font-size:8px;color:var(--txt2);margin-bottom:5px">Fill any 2 known values:</div>${fi('oV','Voltage V (V)')}${fi('oI','Current I (A)')}${fi('oR','Resistance Ω')}${fi('oP','Power P (W)')}`, 'cOhms');}
+function eOhms(){mkTool('⚡ Ohm\'s Law',`<div style="font-size:17px;color:var(--txt2);margin-bottom:5px">Fill any 2 known values:</div>${fi('oV','Voltage V (V)')}${fi('oI','Current I (A)')}${fi('oR','Resistance Ω')}${fi('oP','Power P (W)')}`, 'cOhms');}
 function cOhms(){const r=Electrical.ohmsLaw({V:gv('oV')||null,I:gv('oI')||null,R:gv('oR')||null,P:gv('oP')||null});showRes([{k:'Voltage V',v:fmt(r.V??0)+' V'},{k:'Current I',v:fmt(r.I??0)+' A'},{k:'Resistance R',v:fmt(r.R??0)+' Ω'},{k:'Power P',v:fmt(r.P??0)+' W'}]);}
 
 function eRC(){mkTool('🔵 RC Circuit',`${fi('rR','R (Ω)','',1000)}${fi('rC','C (F)','',1e-6)}${fi('rV0','Initial V (V)','',5)}${fi('rt','Time t (s)','',0)}`, 'cRC');}
@@ -755,19 +772,19 @@ function cMohrs(){const sx=gv('msx'),sy=gv('msy'),txy=gv('mtxy');const r=Structu
 function ePipe(){mkTool('🌊 Pipe Flow',`${fi('pD','Diameter D (m)','',0.1)}${fi('pv','Velocity v (m/s)','',2)}${fi('pL','Length L (m)','',100)}${fi('prho','Density ρ (kg/m³)','',998)}${fi('pmu','Viscosity μ (Pa·s)','',0.001)}${fi('peps','Roughness ε (m)','',0.00015)}`, 'cPipe');}
 function cPipe(){const D=gv('pD'),v=gv('pv'),L=gv('pL'),rho=gv('prho'),mu=gv('pmu'),eps=gv('peps');const Re=Fluid.reynolds(rho,v,D,mu);const f=Re<2300?Fluid.frictionLaminar(Re):Fluid.frictionColebrook(Re,eps/D);showRes([{k:'Reynolds Re',v:fmt(Re)+' ('+Fluid.flowRegime(Re)+')'},{k:'Friction f',v:fmt(f)},{k:'Head Loss hL',v:fmt(Fluid.headLossDarcy(f,L,D,v))+' m'},{k:'ΔP',v:fmt(Fluid.pressureLossDarcy(f,L,D,rho,v)/1000)+' kPa'},{k:'Flow Q',v:fmt(Fluid.pipeFlow(v,D)*1000)+' L/s'}]);}
 
-function eGas(){mkTool('🌡️ Ideal Gas PV=nRT',`<div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Fill any 3:</div>${fi('gP','P (Pa)','')}${fi('gV','V (m³)','')}${fi('gn','n (mol)','')}${fi('gT','T (K)','')}`, 'cGas');}
+function eGas(){mkTool('🌡️ Ideal Gas PV=nRT',`<div style="font-size:17px;color:var(--txt2);margin-bottom:4px">Fill any 3:</div>${fi('gP','P (Pa)','')}${fi('gV','V (m³)','')}${fi('gn','n (mol)','')}${fi('gT','T (K)','')}`, 'cGas');}
 function cGas(){const P=gv('gP')||null,V=gv('gV')||null,n=gv('gn')||null,T=gv('gT')||null;const r=Thermo.idealGas({P,V,n,T});showRes([{k:'P',v:fmt(r.P??0)+' Pa'},{k:'V',v:fmt(r.V??0)+' m³'},{k:'n',v:fmt(r.n??0)+' mol'},{k:'T',v:fmt(r.T??0)+' K ('+fmt((r.T??273.15)-273.15)+'°C)'}]);}
 
-function eTriangle(){mkTool('📐 Triangle Solver',`<div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Fill any 3 (angles in ${CalcEngine.getAngleMode()}):</div>${fi('ta','Side a','')}${fi('tb','Side b','')}${fi('tc','Side c','')}${fi('tA','Angle A','')}${fi('tB','Angle B','')}${fi('tC','Angle C','')}`, 'cTriangle');}
+function eTriangle(){mkTool('📐 Triangle Solver',`<div style="font-size:17px;color:var(--txt2);margin-bottom:4px">Fill any 3 (angles in ${CalcEngine.getAngleMode()}):</div>${fi('ta','Side a','')}${fi('tb','Side b','')}${fi('tc','Side c','')}${fi('tA','Angle A','')}${fi('tB','Angle B','')}${fi('tC','Angle C','')}`, 'cTriangle');}
 function cTriangle(){const gn=id=>{const v=parseFloat(document.getElementById(id)?.value);return isNaN(v)?undefined:v;};const r=Trigonometry.solveTriangle({a:gn('ta'),b:gn('tb'),c:gn('tc'),A:gn('tA'),B:gn('tB'),C:gn('tC')});showRes([{k:'a',v:fmt(r.a??0)},{k:'b',v:fmt(r.b??0)},{k:'c',v:fmt(r.c??0)},{k:'A',v:fmt(r.A??0)+'°'},{k:'B',v:fmt(r.B??0)+'°'},{k:'C',v:fmt(r.C??0)+'°'},{k:'Area',v:fmt(r.area??0)},{k:'Perimeter',v:fmt(r.perimeter??0)},{k:'Circumradius',v:fmt(r.circumradius??0)}]);}
 
-function eQuad(){mkTool('📊 Quadratic ax²+bx+c=0',`${fi('qa','a','',1)}${fi('qb','b','',0)}${fi('qc','c','',-4)}<div style="font-size:8px;color:var(--txt3);margin:3px 0">For cubic add d:</div>${fi('qd','d (cubic)','0',0)}`, 'cQuad');}
+function eQuad(){mkTool('📊 Quadratic ax²+bx+c=0',`${fi('qa','a','',1)}${fi('qb','b','',0)}${fi('qc','c','',-4)}<div style="font-size:17px;color:var(--txt3);margin:3px 0">For cubic add d:</div>${fi('qd','d (cubic)','0',0)}`, 'cQuad');}
 function cQuad(){const a=gv('qa'),b=gv('qb'),c=gv('qc'),d=gv('qd');const r=d?Algebra.cubic(a,b,c,d):Algebra.quadratic(a,b,c);const rows=r.roots.map((rt,i)=>({k:'x'+(i+1),v:Math.abs(rt.im)<1e-10?fmt(rt.re):`${fmt(rt.re)} ± ${fmt(Math.abs(rt.im))}i`}));rows.push({k:'Discriminant',v:fmt(r.disc??0)},{k:'Type',v:r.type});showRes(rows);}
 
 function eFinance(){mkTool('💰 Time Value of Money',`${fi('fr','Rate r (decimal)','0.05',0.05)}${fi('fn','Periods n','',12)}${fi('fpmt','PMT','0',0)}${fi('fpv','PV','',10000)}${fi('ffv','FV','0',0)}`, 'cFinance');}
 function cFinance(){const r=gv('fr'),n=gv('fn'),pmt=gv('fpmt'),pv=gv('fpv'),fv=gv('ffv');showRes([{k:'FV',v:fmt(Financial.FV(r,n,pmt,pv))},{k:'PV',v:fmt(Financial.PV(r,n,pmt,fv))},{k:'PMT',v:fmt(Financial.PMT(r,n,pv,fv))},{k:'NPER',v:fmt(Financial.NPER(r,pmt,pv,fv))},{k:'Effective Rate',v:fmt(Financial.effectiveAnnualRate(r,12)*100)+'% (monthly cmp)'}]);}
 
-function eStats(){mkTool('📈 Descriptive Statistics',`<div style="font-size:8px;color:var(--txt2);margin-bottom:4px">Comma-separated data:</div><textarea class="ftxa" id="stData" placeholder="1, 2, 3, 4, 5, 6"></textarea>`, 'cStats');}
+function eStats(){mkTool('📈 Descriptive Statistics',`<div style="font-size:17px;color:var(--txt2);margin-bottom:4px">Comma-separated data:</div><textarea class="ftxa" id="stData" placeholder="1, 2, 3, 4, 5, 6"></textarea>`, 'cStats');}
 function cStats(){const raw=document.getElementById('stData')?.value||'';const data=raw.split(/[,\s]+/).map(Number).filter(v=>!isNaN(v));if(!data.length)return;const s=Statistics.summary(data);showRes([{k:'n',v:s.n},{k:'Mean',v:fmt(s.mean)},{k:'Median',v:fmt(s.median)},{k:'Std Dev',v:fmt(s.stdDev)},{k:'Variance',v:fmt(s.variance)},{k:'Min',v:''+s.min},{k:'Max',v:''+s.max},{k:'Q1',v:fmt(s.q1)},{k:'Q3',v:fmt(s.q3)},{k:'IQR',v:fmt(s.iqr)},{k:'Skewness',v:fmt(s.skewness)},{k:'Kurtosis',v:fmt(s.kurtosis)},{k:'SEM',v:fmt(s.sem)}]);}
 
 function e3Phase(){mkTool('⚡ 3-Phase Power',`${fi('3VL','VL (V)','',400)}${fi('3IL','IL (A)','',50)}${fi('3pf','Power Factor','',0.85)}`, 'c3Phase');}
@@ -776,7 +793,7 @@ function c3Phase(){const VL=gv('3VL'),IL=gv('3IL'),pf=gv('3pf');const P=Electric
 function eBuckling(){mkTool('⚙ Euler Column Buckling',`${fi('bkE','E (Pa)','',200e9)}${fi('bkI','I (m⁴)','',8.33e-5)}${fi('bkA','Area (m²)','',0.01)}${fi('bkL','Length L (m)','',5)}${fS('bkEnd','End Condition',[{v:'pin-pin',t:'Pin-Pin (K=1.0)'},{v:'fixed-free',t:'Fixed-Free (K=2.0)'},{v:'fixed-pin',t:'Fixed-Pin (K=0.7)'},{v:'fixed-fixed',t:'Fixed-Fixed (K=0.5)'}])}`, 'cBuckling');}
 function cBuckling(){const E=gv('bkE'),I=gv('bkI'),A=gv('bkA'),L=gv('bkL'),end=document.getElementById('bkEnd')?.value||'pin-pin';const Leff=Structural.leff(L,end);const Pcr=Structural.eulerLoad(E,I,Leff);const r=Math.sqrt(I/A);showRes([{k:'Critical Load Pcr',v:fmt(Pcr/1000)+' kN'},{k:'Effective Length',v:fmt(Leff)+' m'},{k:'Slenderness Ratio',v:fmt(Structural.slendernessRatio(Leff,r))},{k:'Radius of Gyration',v:fmt(r*1000)+' mm'},{k:'Critical Stress',v:fmt(Pcr/A/1e6)+' MPa'}]);}
 
-function openSolveUI(){sw('eng');mkTool('🔍 Equation Solver f(x)=0',`<div style="font-size:8px;color:var(--txt2);margin-bottom:3px">Use x as variable. Example: x^2-4</div><div class="frow"><span class="flbl">f(x) =</span><input type="text" class="finp" id="slvExpr" value="x^2-4" style="-webkit-user-select:auto;user-select:auto;"></div>${fi('slvG','Initial guess x₀','',1)}`, 'cSolve');}
+function openSolveUI(){sw('eng');mkTool('🔍 Equation Solver f(x)=0',`<div style="font-size:17px;color:var(--txt2);margin-bottom:3px">Use x as variable. Example: x^2-4</div><div class="frow"><span class="flbl">f(x) =</span><input type="text" class="finp" id="slvExpr" value="x^2-4" style="-webkit-user-select:auto;user-select:auto;"></div>${fi('slvG','Initial guess x₀','',1)}`, 'cSolve');}
 function cSolve(){const expr=document.getElementById('slvExpr')?.value||'x^2-4';const g=gv('slvG');const r=CalcEngine.evaluate(`solve(${expr},x,${g})`);const root=parseFloat(r.display.split('=')[1]||'0');showRes([{k:'Root x',v:r.error?'No solution found':fmt(root)},{k:'f(root)',v:r.error?'—':fmt(CalcEngine.evalRaw(expr.replace(/\bx\b/g,`(${root})`)))},{k:'Status',v:r.error?'Not converged':'Converged ✓'}]);if(!r.error){ST.expr=String(root);ST.result=fmt(root);ud();}}
 
 // ═══════════════════════════════════════════

@@ -6,7 +6,7 @@
 import type { Page, Notebook, DriveFile, SyncStatus } from '@/types';
 import { useAppStore } from '@/store/useAppStore';
 
-const DRIVE_FOLDER_NAME = 'InkFlow Studio';
+const DRIVE_FOLDER_NAME = 'Foylx Note';
 const PAGE_MIME = 'application/json';
 
 let driveToken: string | null = null;
@@ -24,7 +24,7 @@ function authHeaders() {
 }
 
 /**
- * Get or create the root InkFlow folder in Drive
+ * Get or create the root Foylx Note folder in Drive
  */
 export async function getOrCreateRootFolder(): Promise<string> {
   const res = await fetch(

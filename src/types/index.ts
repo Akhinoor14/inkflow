@@ -1,5 +1,5 @@
 // src/types/index.ts
-// Core types for InkFlow Studio
+// Core types for Foylx Note
 
 export type ToolType =
   | 'pen'

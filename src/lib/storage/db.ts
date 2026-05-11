@@ -4,7 +4,7 @@
 import Dexie, { type Table } from 'dexie';
 import type { Notebook, Page, User, UserPreferences, AudioRecording } from '@/types';
 
-export class InkFlowDB extends Dexie {
+export class FoylxNoteDB extends Dexie {
   notebooks!: Table<Notebook, string>;
   pages!: Table<Page, string>;
   users!: Table<User, string>;
@@ -12,7 +12,7 @@ export class InkFlowDB extends Dexie {
   preferences!: Table<{ id: string } & UserPreferences, string>;
 
   constructor() {
-    super('InkFlowStudio');
+    super('FoylxNoteStudio');
 
     this.version(1).stores({
       notebooks: 'id, userId, title, updatedAt, createdAt',
@@ -24,7 +24,7 @@ export class InkFlowDB extends Dexie {
   }
 }
 
-export const db = new InkFlowDB();
+export const db = new FoylxNoteDB();
 
 // Helper functions
 export async function saveNotebook(notebook: Notebook): Promise<void> {

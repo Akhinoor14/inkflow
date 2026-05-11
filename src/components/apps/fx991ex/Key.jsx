@@ -43,7 +43,7 @@ export default function Key({ keyDef, isShift, isAlpha, onPress }) {
     faceStyle.boxShadow = '0 0 10px rgba(220,48,48,0.85), 0 3px 0 rgba(0,0,0,0.6)'
   }
 
-  const keyWidth = `${Math.round(width * 44)}px`
+  const keyWidth = `${Math.round(width * 52)}px`
 
   return (
     <div
@@ -76,7 +76,7 @@ export default function Key({ keyDef, isShift, isAlpha, onPress }) {
       {/* Main key face */}
       <div
         className={`key-face ${color}`}
-        style={{ width: `${Math.round(width * 44) - 2}px`, ...faceStyle }}
+        style={{ width: `${Math.round(width * 52) - 2}px`, ...faceStyle }}
       >
         <div className="key-main-label"
           style={{ opacity: (shiftActive || alphaActive) ? 0.55 : 1 }}>

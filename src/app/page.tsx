@@ -1,7 +1,8 @@
 'use client';
-// src/app/page.tsx (Session 3 updated)
+// src/app/page.tsx (Session 5 updated)
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useAppStore } from '@/store/useAppStore';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { MainToolbar } from '@/components/toolbar/MainToolbar';
@@ -9,12 +10,15 @@ import { DrawingCanvas } from '@/components/canvas/DrawingCanvas';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { AudioSyncPanel } from '@/components/ui/AudioSyncPanel';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { PWAInstallPrompt } from '@/components/ui/PWAInstallPrompt';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useThumbnailGenerator } from '@/hooks/useThumbnail';
 import { flushSaves } from '@/lib/storage/autoSave';
 import { activateLicense, checkLicense, type LicenseStatus } from '@/lib/license/licenseSystem';
+import { setDriveToken } from '@/lib/auth/googleDrive';
 
 export default function EditorPage() {
+  const { data: session } = useSession();
   const { isAuthLoading, activePageId } = useAppStore();
   const [licenseLoading, setLicenseLoading] = useState(true);
   const [licenseStatus, setLicenseStatus] = useState<LicenseStatus | null>(null);
@@ -30,6 +34,12 @@ export default function EditorPage() {
 
   useKeyboardShortcuts();
   useThumbnailGenerator(activePageId);
+
+  // Auto-set Drive token whenever session changes
+  useEffect(() => {
+    const token = (session as any)?.accessToken;
+    if (token) setDriveToken(token);
+  }, [session]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', flushSaves);
@@ -198,6 +208,7 @@ export default function EditorPage() {
         <AudioSyncPanel />
         <DrawingCanvas className="flex-1" />
       </div>
+      <PWAInstallPrompt />
     </div>
   );
 }

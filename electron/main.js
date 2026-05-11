@@ -1,5 +1,5 @@
 // electron/main.js
-// InkFlow Studio — Electron Desktop App
+// Foylx Note — Electron Desktop App
 // Builds to .exe (Windows), .dmg (Mac), .AppImage (Linux)
 
 const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
@@ -32,7 +32,7 @@ function createWindow() {
     height: 900,
     minWidth: 900,
     minHeight: 600,
-    title: 'InkFlow Studio',
+    title: 'Foylx Note',
     backgroundColor: '#1a1a1e',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -106,7 +106,7 @@ ipcMain.handle('open-file-dialog', async (_, filters) => {
 // Save file dialog (for export)
 ipcMain.handle('save-file-dialog', async (_, { defaultName, filters }) => {
   const result = await dialog.showSaveDialog(mainWindow, {
-    defaultPath: defaultName ?? 'inkflow-export',
+    defaultPath: defaultName ?? 'foylx-export',
     filters: filters ?? [{ name: 'PDF', extensions: ['pdf'] }],
   });
   return result.canceled ? null : result.filePath;

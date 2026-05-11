@@ -52,7 +52,7 @@ export async function exportToPDF(
     }
   }
 
-  const filename = options.filename ?? 'inkflow-export';
+  const filename = options.filename ?? 'foylx-export';
   pdf.save(`${filename}.pdf`);
 }
 
@@ -129,7 +129,7 @@ export async function exportToDOCX(
 
   const doc = new Document({ sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
-  downloadBlob(blob, `${options.filename ?? 'inkflow-export'}.docx`);
+  downloadBlob(blob, `${options.filename ?? 'foylx-export'}.docx`);
 }
 
 /**
@@ -137,7 +137,7 @@ export async function exportToDOCX(
  */
 export async function exportToPNG(
   svgElement: SVGSVGElement,
-  filename: string = 'inkflow-export'
+  filename: string = 'foylx-export'
 ): Promise<void> {
   const serializer = new XMLSerializer();
   const svgStr = serializer.serializeToString(svgElement);

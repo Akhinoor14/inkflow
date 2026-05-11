@@ -4,15 +4,16 @@
 import React, { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { savePreferences } from '@/lib/storage/db';
-import { X, Palette, Save, Globe, Keyboard, Sliders } from 'lucide-react';
+import { X, Palette, Save, Globe, Keyboard, Sliders, Languages } from 'lucide-react';
 import type { BackgroundType } from '@/types';
+import { HandwritingSettingsPanel } from '@/components/modals/HandwritingSettingsPanel';
 
 interface Props { onClose: () => void; }
 
-type Tab = 'general' | 'drawing' | 'shortcuts' | 'about';
+type Tab = 'general' | 'drawing' | 'handwriting' | 'shortcuts' | 'about';
 
 export function SettingsModal({ onClose }: Props) {
-  const { preferences, updatePreferences, isDarkMode, toggleDarkMode } = useAppStore();
+  const { preferences, updatePreferences, isDarkMode, toggleDarkMode, handwritingSettings, setHandwritingSettings } = useAppStore();
   const [tab, setTab] = useState<Tab>('general');
   const [saved, setSaved] = useState(false);
 
@@ -45,6 +46,7 @@ export function SettingsModal({ onClose }: Props) {
     { id: 'general', label: 'General', icon: <Sliders size={14} /> },
     { id: 'drawing', label: 'Drawing', icon: <Palette size={14} /> },
     { id: 'shortcuts', label: 'Shortcuts', icon: <Keyboard size={14} /> },
+    { id: 'handwriting', label: 'Handwriting', icon: <Languages size={14} /> },
     { id: 'about', label: 'About', icon: null },
   ];
 
@@ -236,10 +238,24 @@ export function SettingsModal({ onClose }: Props) {
             </div>
           )}
 
+          {tab === 'handwriting' && (
+            <div className="p-1">
+              <HandwritingSettingsPanel
+                settings={handwritingSettings}
+                onChange={setHandwritingSettings}
+              />
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 rounded-xl text-xs text-blue-600 dark:text-blue-400">
+                <b>How to use:</b> Select strokes with the Select tool, then press the
+                <b> 🌐 Convert</b> button in the toolbar to convert handwriting to text.
+                Set mode to <b>Auto</b> for automatic conversion after each stroke.
+              </div>
+            </div>
+          )}
+
           {tab === 'about' && (
             <div className="py-4 text-center">
               <div className="text-4xl mb-3">🖊</div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">InkFlow Studio</h3>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Foylx Note</h3>
               <p className="text-xs text-gray-400 mt-1">Version 0.1.0 — Session 3</p>
               <div className="mt-6 text-left space-y-2 text-sm text-gray-600 dark:text-gray-300">
                 <p>✅ <strong>Cost:</strong> $0/month (fully free stack)</p>
