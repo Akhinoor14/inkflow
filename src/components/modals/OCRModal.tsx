@@ -2,7 +2,7 @@
 // src/components/modals/OCRModal.tsx
 // Select strokes → run Tesseract.js → show recognized text → insert as text element
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAppStore, useActivePage } from '@/store/useAppStore';
 import { ocrStrokes, runOCR } from '@/lib/ocr/tesseractOCR';
 import { getSvgPath } from '@/lib/canvas/strokeEngine';
@@ -23,10 +23,10 @@ export function OCRModal({ onClose }: Props) {
   const [lang, setLang] = useState<'eng' | 'ben' | 'eng+ben'>('eng');
   const [error, setError] = useState<string>('');
 
-  const selectedStrokes = activePage?.elements.filter(
+  const selectedStrokes = useMemo(() => activePage?.elements.filter(
     (el): el is StrokeElement =>
       el.type === 'stroke' && selection.selectedIds.includes(el.id)
-  ) ?? [];
+  ) ?? [], [activePage, selection.selectedIds]);
 
   const runOCROnSelection = useCallback(async () => {
     if (!activePage || selectedStrokes.length === 0) return;
@@ -58,8 +58,8 @@ export function OCRModal({ onClose }: Props) {
       for (const stroke of selectedStrokes) {
         updateElement(activePage.id, stroke.id, { recognizedText: ocrResult.text });
       }
-    } catch (e: any) {
-      setError(e.message ?? 'OCR failed');
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'OCR failed');
     } finally {
       setIsRunning(false);
     }
@@ -68,7 +68,7 @@ export function OCRModal({ onClose }: Props) {
   // Auto-run when modal opens if strokes selected
   useEffect(() => {
     if (selectedStrokes.length > 0) runOCROnSelection();
-  }, []); // eslint-disable-line
+  }, [selectedStrokes, runOCROnSelection]);
 
   const insertAsText = () => {
     if (!activePage || !result.trim()) return;

@@ -3,6 +3,7 @@
 
 import React, { useEffect } from 'react';
 import { SessionProvider } from 'next-auth/react';
+import { LanguageProvider } from '@/lib/i18n/LanguageContext';
 import { useAppStore } from '@/store/useAppStore';
 import { loadPreferences, getAllNotebooks, getPagesForNotebook } from '@/lib/storage/db';
 
@@ -58,5 +59,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     init();
   }, []); // eslint-disable-line
 
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <LanguageProvider>
+      <SessionProvider>{children}</SessionProvider>
+    </LanguageProvider>
+  );
 }

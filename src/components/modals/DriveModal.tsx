@@ -53,8 +53,8 @@ export function DriveModal({ onClose }: Props) {
       await syncNotebookToDrive(activeNotebook, notebookPages);
       setSyncStatus({ status: 'synced', lastSynced: new Date() });
       setStep('done');
-    } catch (e: any) {
-      setSyncStatus({ status: 'error', error: e.message });
+    } catch (e: unknown) {
+      setSyncStatus({ status: 'error', error: e instanceof Error ? e.message : 'Sync error' });
     } finally {
       setIsSyncing(false);
     }

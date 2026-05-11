@@ -148,9 +148,9 @@ export async function syncNotebookToDrive(
     }
 
     store.setSyncStatus({ status: 'synced', lastSynced: new Date() });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[Drive] Sync failed', err);
-    store.setSyncStatus({ status: 'error', error: err.message });
+    store.setSyncStatus({ status: 'error', error: err instanceof Error ? err.message : 'Sync failed' });
   }
 }
 

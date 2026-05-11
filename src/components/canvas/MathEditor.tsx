@@ -33,7 +33,7 @@ export function MathEditor({ x, y, pageId, transform, onClose }: Props) {
         setPreview(html);
         setError('');
       }).catch(() => setError('KaTeX not installed — run: npm install katex'));
-    } catch (e: any) { setError(e.message); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : 'Error'); }
   }, [latex]);
 
   const commit = () => {

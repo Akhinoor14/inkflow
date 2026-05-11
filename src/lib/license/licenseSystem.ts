@@ -283,7 +283,7 @@ export async function activateLicense(key: string, email: string): Promise<{
     });
 
     return { success: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     return { success: false, error: 'Could not connect to license server. Check your internet connection.' };
   }
 }

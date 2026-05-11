@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_Bengali } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
@@ -11,8 +11,13 @@ export const metadata: Metadata = {
   title: 'Foylx Note — Digital Notebook',
   description: 'Powerful local-first digital notebook with handwriting, OCR, and Google Drive sync',
   manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#3b82f6',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

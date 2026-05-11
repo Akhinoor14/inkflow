@@ -138,7 +138,7 @@ export function MainToolbar() {
               onClick={() => { setActiveTool('shape'); setShowShapeOpts((v) => !v); }} />
             {showShapeOpts && <ShapeSelector onClose={() => setShowShapeOpts(false)} />}
           </div>
-          <ToolBtn icon={<Image size={16} />} label="Insert Image" active={activeTool === 'image'} onClick={() => setActiveTool('image')} />
+          <ToolBtn icon={<Image size={16} />} label="Insert Image" active={activeTool === 'image'} onClick={() => setActiveTool('image')} /> {/* eslint-disable-line jsx-a11y/alt-text */}
           <ToolBtn icon={<Hand size={16} />} label="Pan (Space)" active={activeTool === 'pan'} onClick={() => setActiveTool('pan')} />
         </div>
 

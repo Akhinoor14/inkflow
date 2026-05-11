@@ -99,7 +99,7 @@ export function TextEditor({ element, x, y, pageId, onClose, transform }: TextEd
 
     scheduleSave(pageId);
     onClose();
-  }, [editor, element, pageId, x, y, addElement, updateElement, onClose]);
+  }, [editor, element, pageId, x, y, transform.scale, addElement, updateElement, onClose]);
 
   // Close on Escape, save on Ctrl+Enter
   useEffect(() => {

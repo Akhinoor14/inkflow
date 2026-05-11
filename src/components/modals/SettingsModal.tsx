@@ -3,9 +3,11 @@
 
 import React, { useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { savePreferences } from '@/lib/storage/db';
 import { X, Palette, Save, Globe, Keyboard, Sliders, Languages } from 'lucide-react';
 import type { BackgroundType } from '@/types';
+import type { Language } from '@/lib/i18n';
 import { HandwritingSettingsPanel } from '@/components/modals/HandwritingSettingsPanel';
 
 interface Props { onClose: () => void; }
@@ -14,6 +16,7 @@ type Tab = 'general' | 'drawing' | 'handwriting' | 'shortcuts' | 'about';
 
 export function SettingsModal({ onClose }: Props) {
   const { preferences, updatePreferences, isDarkMode, toggleDarkMode, handwritingSettings, setHandwritingSettings } = useAppStore();
+  const { language, setLanguage, t } = useLanguage();
   const [tab, setTab] = useState<Tab>('general');
   const [saved, setSaved] = useState(false);
 
@@ -43,11 +46,11 @@ export function SettingsModal({ onClose }: Props) {
   );
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: 'general', label: 'General', icon: <Sliders size={14} /> },
-    { id: 'drawing', label: 'Drawing', icon: <Palette size={14} /> },
-    { id: 'shortcuts', label: 'Shortcuts', icon: <Keyboard size={14} /> },
-    { id: 'handwriting', label: 'Handwriting', icon: <Languages size={14} /> },
-    { id: 'about', label: 'About', icon: null },
+    { id: 'general', label: t.settings.tabs.general, icon: <Sliders size={14} /> },
+    { id: 'drawing', label: t.settings.tabs.drawing, icon: <Palette size={14} /> },
+    { id: 'shortcuts', label: t.settings.tabs.shortcuts, icon: <Keyboard size={14} /> },
+    { id: 'handwriting', label: t.settings.tabs.handwriting, icon: <Languages size={14} /> },
+    { id: 'about', label: t.settings.tabs.about, icon: null },
   ];
 
   return (
@@ -56,7 +59,7 @@ export function SettingsModal({ onClose }: Props) {
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg animate-scale-in flex flex-col max-h-[85vh]">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">Settings</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">{t.settings.title}</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={save}
@@ -64,7 +67,7 @@ export function SettingsModal({ onClose }: Props) {
                 saved ? 'bg-green-100 text-green-700' : 'bg-blue-600 text-white hover:bg-blue-700'
               }`}
             >
-              {saved ? '✓ Saved' : 'Save'}
+              {saved ? `✓ ${t.settings.saved}` : t.settings.save}
             </button>
             <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400">
               <X size={16} />
@@ -93,10 +96,10 @@ export function SettingsModal({ onClose }: Props) {
         <div className="flex-1 overflow-y-auto px-5 py-3">
           {tab === 'general' && (
             <div>
-              <Row label="Dark Mode" desc="Switch between light and dark theme">
+              <Row label={t.settings.general.darkMode} desc={t.settings.general.darkModeDesc}>
                 <Toggle value={isDarkMode} onChange={() => toggleDarkMode()} />
               </Row>
-              <Row label="Theme" desc="Color scheme preference">
+              <Row label={t.settings.general.theme} desc={t.settings.general.themeDesc}>
                 <select
                   value={preferences.theme}
                   onChange={(e) => updatePreferences({ theme: e.target.value as any })}
@@ -107,20 +110,24 @@ export function SettingsModal({ onClose }: Props) {
                   <option value="system">System</option>
                 </select>
               </Row>
-              <Row label="Language" desc="UI language">
+              <Row label={t.settings.general.language} desc={t.settings.general.languageDesc}>
                 <select
-                  value={preferences.language}
-                  onChange={(e) => updatePreferences({ language: e.target.value as any })}
+                  value={language}
+                  onChange={(e) => {
+                    const lang = e.target.value as Language;
+                    setLanguage(lang);
+                    updatePreferences({ language: lang });
+                  }}
                   className="text-xs border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 >
                   <option value="en">English</option>
                   <option value="bn">বাংলা</option>
                 </select>
               </Row>
-              <Row label="Auto Save" desc="Automatically save changes">
+              <Row label={t.settings.general.autoSave} desc={t.settings.general.autoSaveDesc}>
                 <Toggle value={preferences.autoSave} onChange={(v) => updatePreferences({ autoSave: v })} />
               </Row>
-              <Row label="Auto Save Interval" desc="How often to auto-save (seconds)">
+              <Row label={t.settings.general.autoSaveInterval} desc={t.settings.general.autoSaveIntervalDesc}>
                 <div className="flex items-center gap-2">
                   <input
                     type="range" min={5} max={120} step={5}
@@ -131,14 +138,14 @@ export function SettingsModal({ onClose }: Props) {
                   <span className="text-xs text-gray-500 w-8">{preferences.autoSaveInterval}s</span>
                 </div>
               </Row>
-              <Row label="Show Ruler" desc="Display ruler on canvas edges">
+              <Row label={t.settings.general.showRuler} desc={t.settings.general.showRulerDesc}>
                 <Toggle value={preferences.showRuler} onChange={(v) => updatePreferences({ showRuler: v })} />
               </Row>
-              <Row label="Snap to Grid" desc="Snap elements to grid">
+              <Row label={t.settings.general.snapToGrid} desc={t.settings.general.snapToGridDesc}>
                 <Toggle value={preferences.snapToGrid} onChange={(v) => updatePreferences({ snapToGrid: v })} />
               </Row>
               {preferences.snapToGrid && (
-                <Row label="Grid Size" desc="Size of grid cells (px)">
+                <Row label={t.settings.general.gridSize} desc={t.settings.general.gridSizeDesc}>
                   <div className="flex items-center gap-2">
                     <input
                       type="range" min={8} max={64} step={4}
@@ -155,7 +162,7 @@ export function SettingsModal({ onClose }: Props) {
 
           {tab === 'drawing' && (
             <div>
-              <Row label="Default Tool" desc="Tool selected when opening a page">
+              <Row label={t.settings.drawing.defaultTool} desc={t.settings.drawing.defaultToolDesc}>
                 <select
                   value={preferences.defaultTool}
                   onChange={(e) => updatePreferences({ defaultTool: e.target.value as any })}
@@ -166,7 +173,7 @@ export function SettingsModal({ onClose }: Props) {
                   <option value="select">Select</option>
                 </select>
               </Row>
-              <Row label="Default Pen Size">
+              <Row label={t.settings.drawing.defaultPenSize}>
                 <div className="flex items-center gap-2">
                   <input
                     type="range" min={1} max={20} step={1}
@@ -177,7 +184,7 @@ export function SettingsModal({ onClose }: Props) {
                   <span className="text-xs text-gray-500 w-6">{preferences.defaultPenSize}</span>
                 </div>
               </Row>
-              <Row label="Default Pen Color">
+              <Row label={t.settings.drawing.defaultPenColor}>
                 <input
                   type="color"
                   value={preferences.defaultPenColor}
@@ -185,7 +192,7 @@ export function SettingsModal({ onClose }: Props) {
                   className="w-8 h-8 rounded-full cursor-pointer border-0"
                 />
               </Row>
-              <Row label="Default Background">
+              <Row label={t.settings.drawing.defaultBackground}>
                 <select
                   value={preferences.defaultBackground}
                   onChange={(e) => updatePreferences({ defaultBackground: e.target.value as BackgroundType })}
@@ -199,7 +206,7 @@ export function SettingsModal({ onClose }: Props) {
                   <option value="music">Music Staff</option>
                 </select>
               </Row>
-              <Row label="Auto-adjust Ink in Dark Mode" desc="Lighten dark ink automatically">
+              <Row label={t.settings.drawing.autoAdjustDarkMode} desc={t.settings.drawing.autoAdjustDarkModeDesc}>
                 <Toggle
                   value={preferences.inkAutoAdjustDarkMode}
                   onChange={(v) => updatePreferences({ inkAutoAdjustDarkMode: v })}

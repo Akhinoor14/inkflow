@@ -30,7 +30,7 @@ export function AudioSyncPanel() {
     getPageAudioRecording(activePage.id).then((rec) => {
       if (rec) setRecording(rec);
     });
-  }, [activePage?.id]);
+  }, [activePage]);
 
   // Waveform animation while recording
   const drawWaveform = useCallback(() => {
