@@ -113,7 +113,7 @@ export function DriveModal({ onClose }: Props) {
                 </svg>
                 Sign in with Google
               </button>
-              <p className="text-xs text-gray-400 mt-3">Only accesses the "Foylx Note" folder in your Drive.</p>
+              <p className="text-xs text-gray-400 mt-3">Only accesses the &quot;Foylx Note&quot; folder in your Drive.</p>
             </div>
           )}
 

@@ -42,8 +42,11 @@ export function MathEditor({ x, y, pageId, transform, onClose }: Props) {
       id: nanoid(), type: 'text',
       x, y, width: 300, height: 60,
       content: `$$${latex}$$`,
-      style: { fontSize: 18, bold: false, italic: false, underline: false,
-        color: '#000000', font: 'serif', align: 'left' },
+      // TextElement expects fontSize/fontFamily/color/align at top level
+      fontSize: 18,
+      fontFamily: 'serif',
+      color: '#000000',
+      align: 'left',
       createdAt: Date.now(), zIndex: Date.now(),
     });
     onClose();

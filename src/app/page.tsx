@@ -2,6 +2,7 @@
 // src/app/page.tsx (Session 5 updated)
 
 import React, { useEffect, useMemo, useState } from 'react';
+import type { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import { useAppStore } from '@/store/useAppStore';
 import { Sidebar } from '@/components/sidebar/Sidebar';
@@ -16,6 +17,10 @@ import { useThumbnailGenerator } from '@/hooks/useThumbnail';
 import { flushSaves } from '@/lib/storage/autoSave';
 import { activateLicense, checkLicense, type LicenseStatus } from '@/lib/license/licenseSystem';
 import { setDriveToken } from '@/lib/auth/googleDrive';
+
+type SessionWithAccessToken = Session & {
+  accessToken?: string;
+};
 
 export default function EditorPage() {
   const { data: session } = useSession();
@@ -37,7 +42,7 @@ export default function EditorPage() {
 
   // Auto-set Drive token whenever session changes
   useEffect(() => {
-    const token = (session as any)?.accessToken;
+    const token = (session as SessionWithAccessToken | null)?.accessToken;
     if (token) setDriveToken(token);
   }, [session]);
 

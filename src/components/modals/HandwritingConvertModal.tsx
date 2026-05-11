@@ -52,13 +52,11 @@ export function HandwritingConvertModal({ strokes, pageId, notebookId, settings,
       width: Math.max(bbox.width, 200),
       height: Math.max(bbox.height, 40),
       content: text,
-      style: {
-        fontSize: settings.fontSize,
-        bold: false, italic: false, underline: false,
-        color: settings.textColor,
-        font: settings.fontFamily,
-        align: 'left',
-      },
+      // TextElement expects font properties at top level
+      fontSize: settings.fontSize,
+      fontFamily: settings.fontFamily,
+      color: settings.textColor,
+      align: 'left',
       createdAt: Date.now(),
       zIndex: Date.now(),
     });

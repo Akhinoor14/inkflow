@@ -2,14 +2,24 @@
 // src/components/ui/PWAInstallPrompt.tsx
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Download, X } from 'lucide-react';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void> | void;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+}
+
 export function PWAInstallPrompt() {
-  const [prompt, setPrompt] = useState<any>(null);
+  const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const handler = (e: any) => { e.preventDefault(); setPrompt(e); setShow(true); };
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setPrompt(e as BeforeInstallPromptEvent);
+      setShow(true);
+    };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
@@ -24,7 +34,7 @@ export function PWAInstallPrompt() {
 
   return (
     <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl px-4 py-3 max-w-sm w-full mx-4">
-      <img src="/logo.svg" alt="" className="w-8 h-8 rounded-lg flex-shrink-0" />
+      <Image src="/logo.svg" alt="Foylx Note" width={32} height={32} className="w-8 h-8 rounded-lg flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Install Foylx Note</p>
         <p className="text-xs text-gray-500">Use offline, works like a native app</p>

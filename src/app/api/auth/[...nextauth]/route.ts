@@ -1,9 +1,33 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import type { DefaultSession } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 
-async function refreshAccessToken(token: any) {
+type AuthToken = JWT & {
+  accessToken?: string;
+  refreshToken?: string;
+  expiresAt?: number;
+  error?: string;
+};
+
+type OAuthRefreshResponse = {
+  access_token?: string;
+  expires_in?: number;
+  refresh_token?: string;
+};
+
+type AppSession = DefaultSession & {
+  accessToken?: string;
+  error?: string;
+};
+
+async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
   try {
+    if (!token.refreshToken) {
+      return { ...token, error: 'RefreshAccessTokenError' };
+    }
+
     const url = 'https://oauth2.googleapis.com/token';
     const res = await fetch(url, {
       method: 'POST',
@@ -15,7 +39,7 @@ async function refreshAccessToken(token: any) {
         refresh_token: token.refreshToken,
       }),
     });
-    const refreshed = await res.json();
+    const refreshed = (await res.json()) as OAuthRefreshResponse;
     if (!res.ok) throw refreshed;
     return {
       ...token,
@@ -48,26 +72,29 @@ const handler = NextAuth({
   ],
   callbacks: {
     async jwt({ token, account }) {
+      const authToken = token as AuthToken;
       // First sign in
       if (account) {
         return {
-          ...token,
+          ...authToken,
           accessToken: account.access_token,
           refreshToken: account.refresh_token,
           expiresAt: account.expires_at,
         };
       }
       // Token still valid
-      if (Date.now() < (token.expiresAt as number) * 1000 - 60_000) {
-        return token;
+      if (Date.now() < (authToken.expiresAt ?? 0) * 1000 - 60_000) {
+        return authToken;
       }
       // Token expired — refresh
-      return refreshAccessToken(token);
+      return refreshAccessToken(authToken);
     },
     async session({ session, token }) {
-      (session as any).accessToken = token.accessToken;
-      (session as any).error = token.error;
-      return session;
+      const appSession = session as AppSession;
+      const authToken = token as AuthToken;
+      appSession.accessToken = authToken.accessToken;
+      appSession.error = authToken.error;
+      return appSession;
     },
   },
   pages: { signIn: '/login' },

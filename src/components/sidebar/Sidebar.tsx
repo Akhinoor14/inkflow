@@ -2,6 +2,7 @@
 // src/components/sidebar/Sidebar.tsx  (Session 4 — drag reorder + context menu)
 
 import React, { useState, useRef } from 'react';
+import Image from 'next/image';
 import { useAppStore, useActiveNotebook } from '@/store/useAppStore';
 import {
   BookOpen, Plus, Trash2, ChevronRight, ChevronDown,
@@ -50,7 +51,7 @@ export function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2">
-            <img src="/logo.svg" alt="" className="w-6 h-6 rounded-md flex-shrink-0" />
+            <Image src="/logo.svg" alt="Foylx Note" width={24} height={24} className="w-6 h-6 rounded-md flex-shrink-0" />
             <span className="font-semibold text-gray-800 dark:text-gray-100 text-sm">Foylx Note</span>
           </div>
           <div className="flex items-center gap-0.5">
@@ -176,7 +177,14 @@ export function Sidebar() {
                       >
                         <GripVertical size={10} className="opacity-0 group-hover:opacity-40 cursor-grab flex-shrink-0" />
                         {page.thumbnail ? (
-                          <img src={page.thumbnail} alt="" className="w-6 h-4 object-cover rounded flex-shrink-0 border border-gray-200 dark:border-gray-700" />
+                          <Image
+                            src={page.thumbnail}
+                            alt={page.title || `Page ${idx + 1}`}
+                            width={24}
+                            height={16}
+                            unoptimized
+                            className="w-6 h-4 object-cover rounded flex-shrink-0 border border-gray-200 dark:border-gray-700"
+                          />
                         ) : (
                           <span className="text-gray-300 dark:text-gray-600 w-4 text-right">{idx + 1}</span>
                         )}
