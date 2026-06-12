@@ -248,6 +248,7 @@ export interface ShapeRecognitionResult {
   shape: ShapeType | null;
   confidence: number;
   boundingBox: BoundingBox;
+  rotation?: number; // degrees, used for line/arrow orientation
 }
 
 // Export types

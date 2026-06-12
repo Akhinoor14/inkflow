@@ -195,7 +195,7 @@ export const useAppStore = create<AppState & AppActions>()(
       language: 'eng+ben' as const,
       autoConvertDelay: 1500,
       shapeAutoConvert: true,
-      geometrySnapThreshold: 0.72,
+      geometrySnapThreshold: 0.8,
       keepOriginalStroke: false,
       fontSize: 16,
       fontFamily: 'Noto Sans Bengali, sans-serif',

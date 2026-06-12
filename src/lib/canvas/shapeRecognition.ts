@@ -16,6 +16,12 @@ function pathLen(pts: Point[]): number {
   let d=0; for(let i=1;i<pts.length;i++) d+=dist(pts[i-1],pts[i]); return d;
 }
 
+/** Angle (in degrees) of the line from first to last point, for line/arrow orientation */
+function strokeAngle(pts: Point[]): number {
+  const a = pts[0], b = pts[pts.length-1];
+  return Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
+}
+
 // ─── Geometry-based classifiers (run BEFORE $1 recognizer) ─────────────────
 
 /** Straightness: ratio of direct distance to path length. 1.0 = perfectly straight */
@@ -206,7 +212,7 @@ function dollarRecognize(pts:Point[]):{name:ShapeType;score:number}|null{
 
 // ─── Main recognizer with geometry pre-pass ─────────────────────────────────
 
-const CONFIDENCE_THRESHOLD = 0.65;
+const CONFIDENCE_THRESHOLD = 0.75;
 
 export function recognizeShape(
   rawPoints: Array<[number,number,number]>
@@ -217,50 +223,98 @@ export function recognizeShape(
   // Smooth points slightly before analysis
   const smoothed = smoothPoints(pts);
 
+  const bb0 = getBounds(pts);
+  const diag = Math.sqrt(bb0.width**2 + bb0.height**2);
+
+  // Bug fix: tiny strokes (dots, small characters, punctuation, parts of
+  // handwriting) must NEVER be auto-converted to shapes. A real intentional
+  // shape (line/circle/rect/etc.) is almost always drawn larger than this.
+  const MIN_SHAPE_DIAGONAL = 40; // px, in canvas space
+  if (diag < MIN_SHAPE_DIAGONAL) {
+    return {shape:null, confidence:0, boundingBox:bb0};
+  }
+
   const straight = straightness(smoothed);
   const circular = circularity(smoothed);
   const closed = isClosed(smoothed);
   const corners = countCorners(smoothed, 35);
 
   // ── Geometry-first classification ──────────────────────────────────────
-  // 1. Straight line: very high straightness
-  if(straight>0.92){
-    return {shape:'line', confidence:straight, boundingBox:getBounds(pts)};
+  // 1. Straight line: very high straightness, AND not closed (handwritten
+  //    letters/connectors are often "straight" over a short span but loop
+  //    back near their start — exclude those).
+  if(straight>0.94 && !closed){
+    return {
+      shape:'line',
+      confidence:straight,
+      boundingBox:getBounds(pts),
+      rotation: strokeAngle(smoothed),
+    };
   }
 
-  // 2. Circle/Ellipse: closed + high circularity
-  if(closed && circular>0.78){
+  // 2. Circle/Ellipse: closed + high circularity.
+  //    Bug fix: require a minimum size — a small closed loop is far more
+  //    likely to be a handwritten letter (o, a, e, ও, র etc.) than an
+  //    intentional circle.
+  const MIN_CIRCLE_DIAGONAL = 60;
+  if(closed && circular>0.82 && diag>=MIN_CIRCLE_DIAGONAL){
     const bb=getBounds(pts);
     const aspectRatio=Math.max(bb.width,bb.height)/Math.max(Math.min(bb.width,bb.height),1);
     const shape: ShapeType = aspectRatio>1.4?'ellipse':'circle';
     return {shape, confidence:circular, boundingBox:bb};
   }
 
-  // 3. Rectangle: closed + ~4 corners
-  if(closed && corners>=3 && corners<=6 && straight<0.92){
+  // 3. Rectangle: closed + ~4 corners.
+  //    Bug fix: require a minimum size for the same reason as circles —
+  //    small closed shapes with corners are usually letters
+  //    (e.g. ক, ব, box-like glyphs), not intentional rectangles.
+  const MIN_RECT_DIAGONAL = 60;
+  if(closed && corners>=3 && corners<=6 && straight<0.92 && diag>=MIN_RECT_DIAGONAL){
     const $1=dollarRecognize(smoothed);
-    if($1?.name==='rect'&&$1.score>0.55){
+    if($1?.name==='rect'&&$1.score>0.62){
       return {shape:'rect',confidence:Math.max($1.score,0.8),boundingBox:getBounds(pts)};
     }
-    if(corners>=3)
-      return {shape:'rect',confidence:0.75,boundingBox:getBounds(pts)};
   }
 
-  // 4. Triangle: closed + ~3 corners
-  if(closed && corners>=2 && corners<=4){
-    return {shape:'triangle',confidence:0.78,boundingBox:getBounds(pts)};
+  // 4. Triangle: closed + ~3 corners. Same minimum-size guard.
+  const MIN_TRIANGLE_DIAGONAL = 60;
+  if(closed && corners>=2 && corners<=4 && diag>=MIN_TRIANGLE_DIAGONAL){
+    const $1=dollarRecognize(smoothed);
+    if($1?.name==='triangle' && $1.score>0.62){
+      return {shape:'triangle',confidence:Math.max($1.score,0.78),boundingBox:getBounds(pts)};
+    }
   }
 
   // 5. Arrow: line-like shaft with hook at end
   const aScore=arrowScore(smoothed);
-  if(aScore>0.7){
-    return {shape:'arrow',confidence:aScore,boundingBox:getBounds(pts)};
+  if(aScore>0.75){
+    return {
+      shape:'arrow',
+      confidence:aScore,
+      boundingBox:getBounds(pts),
+      rotation: strokeAngle(smoothed.slice(0, Math.floor(smoothed.length*0.75) || smoothed.length)),
+    };
   }
 
   // ── Fallback: $1 Recognizer ─────────────────────────────────────────────
+  // Bug fix: only trust the $1 fallback for shapes that passed our minimum
+  // size guard too — otherwise short handwriting strokes keep getting
+  // misclassified as rect/circle/triangle via the template matcher.
+  if (diag < MIN_RECT_DIAGONAL) {
+    return {shape:null, confidence:0, boundingBox:getBounds(pts)};
+  }
+
   const result=dollarRecognize(smoothed);
   if(!result||result.score<CONFIDENCE_THRESHOLD){
     return {shape:null,confidence:result?.score??0,boundingBox:getBounds(pts)};
+  }
+  if (result.name === 'line' || result.name === 'arrow') {
+    return {
+      shape: result.name,
+      confidence: result.score,
+      boundingBox: getBounds(pts),
+      rotation: strokeAngle(smoothed),
+    };
   }
   return {shape:result.name,confidence:result.score,boundingBox:getBounds(pts)};
 }

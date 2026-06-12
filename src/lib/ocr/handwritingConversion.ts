@@ -23,7 +23,7 @@ export const DEFAULT_HANDWRITING_SETTINGS: HandwritingSettings = {
   language: 'eng+ben',
   autoConvertDelay: 1500,
   shapeAutoConvert: true,
-  geometrySnapThreshold: 0.72,
+  geometrySnapThreshold: 0.8,
   keepOriginalStroke: false,
   fontSize: 16,
   fontFamily: 'Noto Sans Bengali, sans-serif',

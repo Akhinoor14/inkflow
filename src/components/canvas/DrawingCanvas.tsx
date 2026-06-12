@@ -294,15 +294,38 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
 
       if (rec.shape && rec.confidence >= threshold) {
         const { x, y, width, height } = rec.boundingBox;
-        addElement(activePage.id, {
-          id: nanoid(), type: 'shape', shapeType: rec.shape,
-          x, y, width: Math.max(width, 20), height: Math.max(height, 20),
-          stroke: style.color, fill: 'transparent',
-          strokeWidth: Math.max(style.size / 2, 1.5),
-          opacity: style.opacity, rotation: 0,
-          audioTimestamp: isRecordingAudio ? getCurrentAudioTimestamp() : undefined,
-          createdAt: Date.now(), zIndex: Date.now(),
-        });
+
+        if ((rec.shape === 'line' || rec.shape === 'arrow') && rec.rotation !== undefined) {
+          // Bug fix: for line/arrow, the bounding box width/height don't
+          // represent the stroke's actual length once it's rotated away
+          // from horizontal. Use the true point-to-point length as the
+          // shape "width" and rotate it into place around the bbox center.
+          const first = livePoints[0];
+          const last = livePoints[livePoints.length - 1];
+          const len = Math.sqrt((last.x - first.x) ** 2 + (last.y - first.y) ** 2);
+          const cx = x + width / 2;
+          const cy = y + height / 2;
+          const h = Math.max(strokeStyle.size * 2, 16); // bbox height for arrow head sizing
+          addElement(activePage.id, {
+            id: nanoid(), type: 'shape', shapeType: rec.shape,
+            x: cx - len / 2, y: cy - h / 2, width: Math.max(len, 20), height: h,
+            stroke: style.color, fill: 'transparent',
+            strokeWidth: Math.max(style.size / 2, 1.5),
+            opacity: style.opacity, rotation: rec.rotation,
+            audioTimestamp: isRecordingAudio ? getCurrentAudioTimestamp() : undefined,
+            createdAt: Date.now(), zIndex: Date.now(),
+          });
+        } else {
+          addElement(activePage.id, {
+            id: nanoid(), type: 'shape', shapeType: rec.shape,
+            x, y, width: Math.max(width, 20), height: Math.max(height, 20),
+            stroke: style.color, fill: 'transparent',
+            strokeWidth: Math.max(style.size / 2, 1.5),
+            opacity: style.opacity, rotation: 0,
+            audioTimestamp: isRecordingAudio ? getCurrentAudioTimestamp() : undefined,
+            createdAt: Date.now(), zIndex: Date.now(),
+          });
+        }
       } else {
         const el = createStrokeElement(livePoints, style);
         if (isRecordingAudio) el.audioTimestamp = getCurrentAudioTimestamp();
