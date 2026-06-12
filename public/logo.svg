@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e40af"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="pen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff"/>
+      <stop offset="100%" style="stop-color:#e0eaff"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="rgba(0,0,0,0.3)"/>
+    </filter>
+  </defs>
+  <!-- Background rounded square -->
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+  <!-- Subtle inner glow -->
+  <rect width="512" height="512" rx="100" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>
+  
+  <!-- Notebook lines (background texture) -->
+  <line x1="120" y1="200" x2="392" y2="200" stroke="rgba(255,255,255,0.15)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="120" y1="240" x2="350" y2="240" stroke="rgba(255,255,255,0.10)" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="120" y1="280" x2="370" y2="280" stroke="rgba(255,255,255,0.10)" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- F letter (Foylx) — stylized as a pen stroke -->
+  <path d="M 160 150 L 160 360" stroke="url(#pen)" stroke-width="22" stroke-linecap="round" fill="none" filter="url(#shadow)"/>
+  <path d="M 160 150 L 310 150" stroke="url(#pen)" stroke-width="22" stroke-linecap="round" fill="none"/>
+  <path d="M 160 248 L 280 248" stroke="url(#pen)" stroke-width="18" stroke-linecap="round" fill="none" opacity="0.9"/>
+  
+  <!-- Pen nib at the end of vertical stroke -->
+  <polygon points="160,360 140,395 180,395" fill="url(#pen)" opacity="0.95"/>
+  <polygon points="160,395 148,395 160,410 172,395" fill="#93c5fd" opacity="0.8"/>
+  
+  <!-- Ink dot -->
+  <circle cx="160" cy="420" r="6" fill="rgba(255,255,255,0.6)"/>
+  
+  <!-- Subtle sparkle top-right -->
+  <circle cx="370" cy="130" r="4" fill="rgba(255,255,255,0.5)"/>
+  <circle cx="390" cy="115" r="2.5" fill="rgba(255,255,255,0.35)"/>
+  <circle cx="355" cy="118" r="2" fill="rgba(255,255,255,0.3)"/>
+</svg>
