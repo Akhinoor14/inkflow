@@ -4,6 +4,8 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "warn",
-    "react/display-name": "off"
+    "react/display-name": "off",
+    "@next/next/no-page-custom-font": "off",
+    "react/no-unescaped-entities": "off"
   }
 }
