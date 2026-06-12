@@ -77,8 +77,6 @@ export function TextEditor({ element, x, y, pageId, onClose, transform }: TextEd
       updateElement(pageId, element.id, { content: html, width: w, height: h });
     } else {
       // Create new
-      const posX = x ?? 100;
-      const posY = y ?? 100;
       const newEl: TextElement = {
         id: idRef.current,
         type: 'text',
@@ -97,7 +95,9 @@ export function TextEditor({ element, x, y, pageId, onClose, transform }: TextEd
       addElement(pageId, newEl);
     }
 
-    scheduleSave(pageId);
+    // Fix #2: pass notebookId so notebook is also saved to IndexedDB
+    const page = useAppStore.getState().pages[pageId];
+    scheduleSave(pageId, page?.notebookId);
     onClose();
   }, [editor, element, pageId, x, y, transform.scale, addElement, updateElement, onClose]);
 

@@ -1,4 +1,4 @@
-# InkFlow License Workflow for a3kmstudio@gmail.com
+# Foylx Note License Workflow for a3kmstudio@gmail.com
 
 এই file টা developer perspective থেকে লেখা।
 এখানে দেখানো আছে customer email `a3kmstudio@gmail.com` ব্যবহার করে কী কী করতে হবে, কোনটা automatic, কোনটা manual, আর কোনটা পরে test করতে হবে।

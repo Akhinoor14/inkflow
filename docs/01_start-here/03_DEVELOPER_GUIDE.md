@@ -1,4 +1,4 @@
-# InkFlow Studio — Developer Guide
+# Foylx Note Studio — Developer Guide
 ## বিসমিল্লাহির রাহমানির রাহীম
 
 ---
@@ -52,7 +52,7 @@
 
 ```bash
 # 1. Clone or unzip the project
-cd inkflow-studio
+cd foylx-note-studio
 
 # 2. Install dependencies
 npm install
@@ -147,7 +147,7 @@ Use Render if you need a persistent server (e.g., for WebSocket features later).
 # render.yaml (create this file)
 services:
   - type: web
-    name: inkflow-studio
+    name: foylx-note-studio
     runtime: node
     buildCommand: npm install && npm run build
     startCommand: npm start
@@ -155,7 +155,7 @@ services:
       - key: NEXTAUTH_SECRET
         sync: false
       - key: NEXTAUTH_URL
-        value: https://inkflow-studio.onrender.com
+        value: https://foylx-note-studio.onrender.com
 ```
 
 **Vercel vs Render:**
@@ -184,7 +184,7 @@ npm run build
 # 3. Build .exe installer
 npm run electron:win
 
-# Output: dist-electron/InkFlow-Studio-Setup-1.0.0.exe
+# Output: dist-electron/Foylx Note-Studio-Setup-1.0.0.exe
 ```
 
 ### Build on any OS using GitHub Actions (free):
@@ -285,15 +285,15 @@ cd android
 
 ```bash
 # Generate keystore (do once, keep safe!)
-keytool -genkey -v -keystore inkflow-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias inkflow
+keytool -genkey -v -keystore foylx-note-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias foylx-note
 
 # Sign APK
 jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-  -keystore inkflow-release.jks \
-  app-release-unsigned.apk inkflow
+  -keystore foylx-note-release.jks \
+  app-release-unsigned.apk foylx-note
 
 # Align
-zipalign -v 4 app-release-unsigned.apk InkFlow-Studio.apk
+zipalign -v 4 app-release-unsigned.apk Foylx Note-Studio.apk
 ```
 
 ---
@@ -418,7 +418,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 ## 11. Google OAuth Setup {#google-oauth}
 
 1. Go to https://console.cloud.google.com
-2. New Project → "InkFlow Studio"
+2. New Project → "Foylx Note Studio"
 3. APIs & Services → Enable:
    - Google Drive API
    - Google+ API (for profile)
@@ -435,7 +435,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -node
 ## 12. File Structure {#file-structure}
 
 ```
-inkflow-studio/
+foylx-note-studio/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/auth/           # NextAuth Google OAuth

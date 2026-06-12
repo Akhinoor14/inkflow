@@ -16,7 +16,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days offline grace
 const MAX_DEVICES = 2; // one key works on max 2 devices
-const LICENSE_CACHE_KEY = 'foylx_lic';
+const LICENSE_CACHE_KEY = 'foylx_note_lic';
 const SUPABASE_REQUEST_TIMEOUT_MS = 5000;
 
 async function withTimeout<T>(promise: PromiseLike<T>, timeoutMs = SUPABASE_REQUEST_TIMEOUT_MS): Promise<T> {
@@ -104,7 +104,7 @@ function checkTamper(): boolean {
   // In Electron, we verify the app binary hash at startup
   // In web, we check if critical functions are untouched
   try {
-    const sentinel = (window as any).__INKFLOW_SENTINEL__;
+    const sentinel = (window as any).__FOYLX_NOTE_SENTINEL__;
     if (sentinel !== undefined && sentinel !== 'authentic') return false;
     return true;
   } catch {
@@ -192,12 +192,16 @@ export async function checkLicense(): Promise<LicenseStatus> {
     writeCache(updated);
 
     // Log activation event
-    await supabase.from('activation_log').insert({
+    // Log activation event (fire-and-forget, non-critical)
+    supabase.from('activation_log').insert({
       key: cache.key,
       device_id: machineId,
       event: 'verified',
       app_version: '0.1.0',
-    }).select();
+    }).then(
+      () => {},
+      () => {}
+    );
 
     return {
       valid: true,

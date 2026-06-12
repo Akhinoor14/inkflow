@@ -8,6 +8,7 @@ import { ocrStrokes, runOCR } from '@/lib/ocr/tesseractOCR';
 import { getSvgPath } from '@/lib/canvas/strokeEngine';
 import { X, Copy, CheckCheck, Loader2, Languages } from 'lucide-react';
 import { nanoid } from 'nanoid';
+import { scheduleSave } from '@/lib/storage/autoSave';
 import type { StrokeElement, TextElement } from '@/types';
 
 interface Props { onClose: () => void; }
@@ -94,6 +95,7 @@ export function OCRModal({ onClose }: Props) {
       zIndex: Date.now(),
     };
     addElement(activePage.id, el);
+    scheduleSave(activePage.id, activePage.notebookId);
     onClose();
   };
 

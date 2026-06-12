@@ -19,7 +19,7 @@ export default function Key({ keyDef, isShift, isAlpha, onPress }) {
     else if (isAlpha && alphaAction) act = alphaAction
     else if (isAlpha && alphaLabel && alphaLabel.length === 1) act = alphaLabel
     onPress(act, keyDef)
-    setTimeout(() => setPressed(false), 120)
+    setTimeout(() => setPressed(false), 100)
   }, [isShift, isAlpha, action, shiftAction, alphaAction, alphaLabel, keyDef, onPress])
 
   const handleDown = useCallback(e => {
@@ -27,36 +27,34 @@ export default function Key({ keyDef, isShift, isAlpha, onPress }) {
     handlePress()
   }, [handlePress])
 
-  // Determine which label to highlight on key face when modifier active
   const shiftActive = isShift && shiftLabel
   const alphaActive = isAlpha && (alphaLabel || alphaAction)
-
-  // Key face glow for special keys
   const isShiftKey = id === 'SHIFT'
   const isAlphaKey = id === 'ALPHA'
 
   const faceStyle = {}
-  if (isShiftKey && isShift) {
-    faceStyle.boxShadow = '0 0 10px rgba(240,192,48,0.85), 0 3px 0 rgba(0,0,0,0.6)'
-  }
-  if (isAlphaKey && isAlpha) {
-    faceStyle.boxShadow = '0 0 10px rgba(220,48,48,0.85), 0 3px 0 rgba(0,0,0,0.6)'
-  }
+  if (isShiftKey && isShift)
+    faceStyle.boxShadow = '0 0 8px rgba(212,160,16,0.75), 0 3px 0 rgba(0,0,0,0.3)'
+  if (isAlphaKey && isAlpha)
+    faceStyle.boxShadow = '0 0 8px rgba(200,56,56,0.75), 0 3px 0 rgba(0,0,0,0.3)'
 
-  const keyWidth = `${Math.round(width * 52)}px`
+  // Use CSS variable for key unit; computed via style
+  const keyWidthStyle = {
+    width: `calc(var(--key-unit) * ${width} + var(--key-gap) * ${width - 1})`,
+  }
 
   return (
     <div
       className={`key${pressed ? ' pressed' : ''}`}
-      style={{ width: keyWidth }}
+      style={keyWidthStyle}
       onMouseDown={handleDown}
       onTouchStart={handleDown}
       onContextMenu={e => e.preventDefault()}
     >
-      {/* Top labels row: shift (yellow) left, alpha (red) right */}
+      {/* Top row: shift label left, alpha label right */}
       <div style={{
         display: 'flex', justifyContent: 'space-between',
-        alignItems: 'flex-end', minHeight: '10px',
+        alignItems: 'flex-end', minHeight: '9px',
         paddingLeft: '1px', paddingRight: '1px', marginBottom: '1px',
       }}>
         <span className="key-shift-label" style={{
@@ -73,18 +71,16 @@ export default function Key({ keyDef, isShift, isAlpha, onPress }) {
         </span>
       </div>
 
-      {/* Main key face */}
+      {/* Key face */}
       <div
         className={`key-face ${color}`}
-        style={{ width: `${Math.round(width * 52) - 2}px`, ...faceStyle }}
+        style={{ width: '100%', ...faceStyle }}
       >
         <div className="key-main-label"
-          style={{ opacity: (shiftActive || alphaActive) ? 0.55 : 1 }}>
+          style={{ opacity: (shiftActive || alphaActive) ? 0.5 : 1 }}>
           {label}
         </div>
-        {subLabel && (
-          <div className="key-sub-label">{subLabel}</div>
-        )}
+        {subLabel && <div className="key-sub-label">{subLabel}</div>}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-# InkFlow Studio Beginner Setup (Bangla, Baby-Step Guide)
+# Foylx Note Studio Beginner Setup (Bangla, Baby-Step Guide)
 
 এই গাইড একদম নতুনদের জন্য।
 তুমি যদি কিছুই না জানো, তবুও এই ফাইল দেখে project চালাতে পারবে।
@@ -52,12 +52,12 @@ Get-Location
 
 Target path:
 
-C:/Users/AKHINOOR/Downloads/inkflow-FINAL/inkflow
+C:/Users/AKHINOOR/Downloads/foylx-note-FINAL/foylx-note
 
 যদি অন্য path হয়:
 
 ```powershell
-cd C:/Users/AKHINOOR/Downloads/inkflow-FINAL/inkflow
+cd C:/Users/AKHINOOR/Downloads/foylx-note-FINAL/foylx-note
 ```
 
 ### 2.2 dependency install
@@ -154,7 +154,7 @@ npm run dev
 ### 4.1 Google Cloud Console
 
 1. যাও: https://console.cloud.google.com
-2. New Project -> নাম দাও (InkFlow Studio)
+2. New Project -> নাম দাও (Foylx Note Studio)
 3. APIs & Services -> Library
 4. Enable:
    - Google Drive API

@@ -139,8 +139,15 @@ export function Sidebar() {
                     <Edit2 size={10} />
                   </button>
                   <button
-                    onClick={(e) => { e.stopPropagation(); deleteNotebook(nb.id); }}
-                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (notebookList.length <= 1) return; // prevent deleting last notebook
+                      if (window.confirm(`Delete notebook "${nb.title}"? This cannot be undone.`)) {
+                        deleteNotebook(nb.id);
+                      }
+                    }}
+                    className={`opacity-0 group-hover:opacity-100 p-0.5 rounded text-gray-400 hover:text-red-500 ${notebookList.length <= 1 ? 'cursor-not-allowed opacity-20' : ''}`}
+                    title={notebookList.length <= 1 ? 'Cannot delete the only notebook' : 'Delete notebook'}
                   >
                     <Trash2 size={11} />
                   </button>
@@ -190,7 +197,11 @@ export function Sidebar() {
                         )}
                         <span className="flex-1 truncate">{page.title || `Page ${idx + 1}`}</span>
                         <button
-                          onClick={(e) => { e.stopPropagation(); if (nbPages.length > 1) deletePage(page.id); }}
+                          onClick={(e) => {
+                              e.stopPropagation();
+                              if (nbPages.length <= 1) return;
+                              deletePage(page.id);
+                            }}
                           className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500"
                         >
                           <Trash2 size={10} />
@@ -224,7 +235,7 @@ export function Sidebar() {
                   ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300'
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
               )}
-              title="fx-991EX Calculator (Alt+C)"
+              title="Foylx Calculator (Alt+C)"
             >
               <Calculator size={16} />
               <span>Calculator</span>

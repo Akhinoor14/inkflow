@@ -1,7 +1,7 @@
 'use client';
 // src/components/toolbar/MainToolbar.tsx  (Session 3 updated)
 
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import {
   Pen, Eraser, MousePointer, Type, Square, Hand, Highlighter,
@@ -69,8 +69,6 @@ export function MainToolbar() {
   useHotkeys('t', () => setActiveTool('text'));
   useHotkeys('h', () => setActiveTool('highlighter'));
   useHotkeys('l', () => setActiveTool('lasso'));
-  useHotkeys('ctrl+z,meta+z', undo);
-  useHotkeys('ctrl+shift+z,meta+shift+z,ctrl+y', redo);
   useHotkeys('ctrl+0,meta+0', resetTransform);
   useHotkeys('ctrl+f,meta+f', (e) => { e.preventDefault(); setShowSearch(true); });
   useHotkeys('ctrl+shift+o', (e) => { e.preventDefault(); setShowOCR(true); });
@@ -79,20 +77,26 @@ export function MainToolbar() {
   const onDragStart = useCallback((e: React.PointerEvent) => {
     if (!isToolbarFloating) return;
     e.stopPropagation();
+    e.preventDefault();
     setIsDragging(true);
     dragRef.current = { sx: e.clientX, sy: e.clientY, px: toolbarPosition.x, py: toolbarPosition.y };
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }, [isToolbarFloating, toolbarPosition]);
 
-  const onDragMove = useCallback((e: React.PointerEvent) => {
+  useEffect(() => {
     if (!isDragging) return;
-    e.stopPropagation();
-    const nx = Math.max(0, Math.min(window.innerWidth - 56, dragRef.current.px + e.clientX - dragRef.current.sx));
-    const ny = Math.max(48, Math.min(window.innerHeight - 100, dragRef.current.py + e.clientY - dragRef.current.sy));
-    setToolbarPosition({ x: nx, y: ny });
+    const onMove = (e: PointerEvent) => {
+      const nx = Math.max(0, Math.min(window.innerWidth - 56, dragRef.current.px + e.clientX - dragRef.current.sx));
+      const ny = Math.max(48, Math.min(window.innerHeight - 100, dragRef.current.py + e.clientY - dragRef.current.sy));
+      setToolbarPosition({ x: nx, y: ny });
+    };
+    const onUp = () => setIsDragging(false);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
   }, [isDragging, setToolbarPosition]);
-
-  const onDragEnd = useCallback(() => setIsDragging(false), []);
 
   const f = isToolbarFloating;
   const dir = f ? 'flex-col' : 'flex-row';
@@ -114,8 +118,6 @@ export function MainToolbar() {
             ref={dragHandleRef}
             className="w-full flex justify-center py-1 cursor-grab active:cursor-grabbing rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
             onPointerDown={onDragStart}
-            onPointerMove={onDragMove}
-            onPointerUp={onDragEnd}
           >
             <Move size={12} className="text-gray-300 dark:text-gray-600" />
           </div>
@@ -154,9 +156,9 @@ export function MainToolbar() {
 
         {/* Zoom */}
         <div className={clsx('flex items-center gap-0.5', dir)}>
-          <ToolBtn icon={<ZoomIn size={16} />} label="Zoom In (+)" active={false} onClick={() => zoomTo(transform.scale * 1.25)} />
+          <ToolBtn icon={<ZoomIn size={16} />} label="Zoom In (+)" active={false} onClick={() => { const el = document.querySelector('.drawing-canvas'); const r = el?.getBoundingClientRect(); zoomTo(transform.scale * 1.25, r ? r.width/2 : 0, r ? r.height/2 : 0); }} />
           <button onClick={resetTransform} className="px-2 h-9 text-xs font-mono text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg min-w-[46px]">{zoomPct}%</button>
-          <ToolBtn icon={<ZoomOut size={16} />} label="Zoom Out (-)" active={false} onClick={() => zoomTo(transform.scale / 1.25)} />
+          <ToolBtn icon={<ZoomOut size={16} />} label="Zoom Out (-)" active={false} onClick={() => { const el = document.querySelector('.drawing-canvas'); const r = el?.getBoundingClientRect(); zoomTo(transform.scale / 1.25, r ? r.width/2 : 0, r ? r.height/2 : 0); }} />
         </div>
 
         {!f && <Div />}

@@ -1,5 +1,5 @@
 'use client';
-// src/components/canvas/DrawingCanvas.tsx — fully fixed
+// src/components/canvas/DrawingCanvas.tsx — production-hardened
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppStore, useActivePage } from '@/store/useAppStore';
@@ -56,11 +56,15 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
   const shapeStart = useRef<Point | null>(null);
   const isDraggingSelection = useRef(false);
   const dragOrigin = useRef<Point | null>(null);
+  // Fix #7: track whether we already pushed history for this drag session
+  const didPushDragHistory = useRef(false);
   const isPanning = useRef(false);
   const panStart = useRef<Point>({ x: 0, y: 0 });
   const transformStart = useRef({ x: 0, y: 0 });
   const lastTouchDist = useRef<number | null>(null);
   const autoConvertTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Fix #5: track whether eraser history has been pushed for current stroke
+  const eraserHistoryPushed = useRef(false);
 
   useImageDrop(containerRef as React.RefObject<HTMLElement>);
 
@@ -101,6 +105,41 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
 
     if (activeTool === 'text') { setTextEditor({ open: true, x: pt.x, y: pt.y }); return; }
 
+    if (activeTool === 'image') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (ev) => {
+        const file = (ev.target as HTMLInputElement).files?.[0];
+        if (!file || !activePage) return;
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          const src = re.target?.result as string;
+          const img = new window.Image();
+          img.onload = () => {
+            const maxW = 400;
+            const scale = img.width > maxW ? maxW / img.width : 1;
+            addElement(activePage.id, {
+              id: nanoid(), type: 'image',
+              x: pt.x, y: pt.y,
+              width: img.width * scale,
+              height: img.height * scale,
+              src,
+              rotation: 0,
+              opacity: 1,
+              createdAt: Date.now(),
+              zIndex: Date.now(),
+            } as any);
+            scheduleSave(activePage.id, activePage.notebookId);
+          };
+          img.src = src;
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+      return;
+    }
+
     if (activeTool === 'shape') {
       pushHistory('shape');
       shapeStart.current = pt;
@@ -116,7 +155,16 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
       return;
     }
 
-    if (activeTool === 'eraser') { setIsDrawing(true); doErase(pt); return; }
+    if (activeTool === 'eraser') {
+      // Fix #5: push history once at the start of each erase stroke
+      if (!eraserHistoryPushed.current) {
+        pushHistory('erase');
+        eraserHistoryPushed.current = true;
+      }
+      setIsDrawing(true);
+      doErase(pt);
+      return;
+    }
 
     if (activeTool === 'lasso') {
       setIsLassoing(true); setLassoPoints([pt]); clearSelection(); return;
@@ -132,8 +180,10 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
             : [...selection.selectedIds, hit]
           : alreadySelected ? selection.selectedIds : [hit];
         setSelection({ selectedIds: newSel });
+        // Fix #7: only push history when we actually start dragging, not on every click
         dragOrigin.current = pt;
         isDraggingSelection.current = true;
+        didPushDragHistory.current = false;
       } else {
         clearSelection();
       }
@@ -166,8 +216,15 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
     if (isDraggingSelection.current && dragOrigin.current && activePage && selection.selectedIds.length > 0) {
       const dx = pt.x - dragOrigin.current.x;
       const dy = pt.y - dragOrigin.current.y;
-      moveElements(activePage.id, selection.selectedIds, dx, dy);
-      dragOrigin.current = pt;
+      // Fix #7: push history only on first actual movement (not on every click)
+      if ((Math.abs(dx) > 1 || Math.abs(dy) > 1) && !didPushDragHistory.current) {
+        pushHistory('move elements');
+        didPushDragHistory.current = true;
+      }
+      if (didPushDragHistory.current) {
+        moveElements(activePage.id, selection.selectedIds, dx, dy);
+        dragOrigin.current = pt;
+      }
       return;
     }
 
@@ -175,13 +232,21 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
     if (activeTool === 'pen' || activeTool === 'highlighter') {
       setLivePoints(p => [...p, getRawPoints(e.nativeEvent, containerRef.current!, transform)]);
     }
-  }, [activeTool, isDrawing, isLassoing, transform, selection, activePage, getCanvasPoint, setTransform, doErase, moveElements]);
+  }, [activeTool, isDrawing, isLassoing, transform, selection, activePage, getCanvasPoint, setTransform, doErase, moveElements, pushHistory]);
 
   const handlePointerUp = useCallback(async (e: React.PointerEvent<SVGSVGElement>) => {
     isPanning.current = false;
 
+    // Fix #5: reset eraser history flag on pointer up
+    if (activeTool === 'eraser') {
+      eraserHistoryPushed.current = false;
+      setIsDrawing(false);
+      return;
+    }
+
     if (isDraggingSelection.current) {
       isDraggingSelection.current = false;
+      didPushDragHistory.current = false;
       dragOrigin.current = null;
       if (activePage) scheduleSave(activePage.id, activePage.notebookId);
       return;
@@ -246,8 +311,11 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
         // Auto handwriting conversion
         if (handwritingSettings.conversionMode === 'auto') {
           if (autoConvertTimer.current) clearTimeout(autoConvertTimer.current);
+          const capturedPageId = activePage.id;
           autoConvertTimer.current = setTimeout(() => {
-            const last = activePage.elements.filter(e2 => e2.type === 'stroke').slice(-1) as any[];
+            // Fix #16: read page from store at callback time, not from stale closure
+            const freshPage = useAppStore.getState().pages[capturedPageId];
+            const last = freshPage ? freshPage.elements.filter(e2 => e2.type === 'stroke').slice(-1) as any[] : [];
             if (last.length) { setAutoConvertStrokes(last); setShowAutoConvert(true); }
           }, handwritingSettings.autoConvertDelay);
         }
@@ -258,7 +326,7 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
   }, [isDrawing, isLassoing, lassoPoints, activeTool, livePoints, activePage,
       strokeStyle, highlighterStyle, isDarkMode, preferences, isRecordingAudio,
       activeShapeType, shapePreview, handwritingSettings,
-      addElement, setSelection]);
+      addElement, setSelection, pushHistory]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     if (!activePage) return;
@@ -282,21 +350,29 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
     setCtxMenu({ x: e.clientX, y: e.clientY, canvasX: pt.x, canvasY: pt.y });
   }, [getCanvasPoint]);
 
+  // Wheel zoom/pan — passive: false so we can preventDefault
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      // Always read fresh transform from store, not from stale closure
+      const { transform: t } = useAppStore.getState();
       if (e.ctrlKey || e.metaKey) {
         const rect = el.getBoundingClientRect();
-        zoomTo(transform.scale * (1 - e.deltaY * 0.01), e.clientX - rect.left, e.clientY - rect.top);
+        // Fix #4: zoom anchored to cursor position relative to container
+        useAppStore.getState().zoomTo(
+          t.scale * (1 - e.deltaY * 0.01),
+          e.clientX - rect.left,
+          e.clientY - rect.top
+        );
       } else {
-        setTransform({ x: transform.x - e.deltaX, y: transform.y - e.deltaY });
+        useAppStore.getState().setTransform({ x: t.x - e.deltaX, y: t.y - e.deltaY });
       }
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [transform, setTransform, zoomTo]);
+  }, []); // Fix: no deps — always reads fresh state via getState()
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (e.touches.length !== 2) return;
@@ -344,7 +420,14 @@ export function DrawingCanvas({ className }: DrawingCanvasProps) {
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerLeave={() => setEraserPos(null)}
+        onPointerLeave={() => {
+          setEraserPos(null);
+          // Fix #5: also reset eraser history flag if pointer leaves canvas mid-stroke
+          if (activeTool === 'eraser') {
+            eraserHistoryPushed.current = false;
+            setIsDrawing(false);
+          }
+        }}
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
         style={{ touchAction: 'none' }}

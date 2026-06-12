@@ -1,4 +1,4 @@
-# InkFlow License System - Total Master Guide (Bangla)
+# Foylx Note License System - Total Master Guide (Bangla)
 
 এই guide একদম শুরু থেকে শেষ পর্যন্ত license system বুঝতে সাহায্য করবে।
 এখানে আছে:
@@ -304,7 +304,7 @@ UI-তে Bengali messages already দেওয়া আছে:
 7. Success -> লাইসেন্স সফলভাবে অ্যাক্টিভেট হয়েছে
 
 UI labels:
-1. Activate InkFlow -> লাইসেন্স অ্যাক্টিভেশন
+1. Activate Foylx Note -> লাইসেন্স অ্যাক্টিভেশন
 2. Email -> আপনার ইমেইল
 3. License Key -> লাইসেন্স কী
 4. Activate License -> এখনই অ্যাক্টিভেট করুন

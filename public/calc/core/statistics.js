@@ -260,8 +260,8 @@ const Statistics = (() => {
     // Weibull
     weibull: {
       pdf: (x, k, lambda) => x < 0 ? 0 :
-        (k/lambda) * (x/lambda)**(k-1) * Math.exp(-(x/lambda)**k),
-      cdf: (x, k, lambda) => x < 0 ? 0 : 1 - Math.exp(-(x/lambda)**k),
+        (k/lambda) * (x/lambda)**(k-1) * Math.exp(-((x/lambda)**k)),
+      cdf: (x, k, lambda) => x < 0 ? 0 : 1 - Math.exp(-((x/lambda)**k)),
       mean: (k, lambda) => lambda * gamma_fn(1 + 1/k),
     },
   };

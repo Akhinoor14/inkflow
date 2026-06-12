@@ -1,6 +1,6 @@
 {
-  "appId": "studio.inkflow.app",
-  "appName": "InkFlow Studio",
+  "appId": "studio.foylxnote.app",
+  "appName": "Foylx Note Studio",
   "webDir": "out",
   "server": {
     "androidScheme": "https"

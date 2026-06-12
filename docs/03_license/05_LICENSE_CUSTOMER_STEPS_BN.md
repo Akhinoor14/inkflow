@@ -1,4 +1,4 @@
-# InkFlow License - Customer Steps
+# Foylx Note License - Customer Steps
 
 এই file customer-side flow বোঝার জন্য।
 

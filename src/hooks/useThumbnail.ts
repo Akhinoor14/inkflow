@@ -1,7 +1,7 @@
 // src/hooks/useThumbnail.ts
 // Generate small thumbnail previews for pages (for sidebar)
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { updatePageThumbnail } from '@/lib/storage/db';
 import { getSvgPath } from '@/lib/canvas/strokeEngine';
@@ -12,6 +12,7 @@ const THUMB_SCALE = 0.067; // approx ratio for A4
 
 export function useThumbnailGenerator(pageId: string | null) {
   const pages = useAppStore((s) => s.pages);
+  const lastThumbRef = useRef<string | null>(null);
 
   const generate = useCallback(async () => {
     if (!pageId) return;
@@ -83,6 +84,9 @@ export function useThumbnailGenerator(pageId: string | null) {
       }
 
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      // Guard: skip if thumbnail hasn't changed to avoid re-render loop
+      if (lastThumbRef.current === dataUrl) return;
+      lastThumbRef.current = dataUrl;
       await updatePageThumbnail(pageId, dataUrl);
       useAppStore.getState().updatePage(pageId, { thumbnail: dataUrl });
     } catch (e) {
@@ -91,9 +95,10 @@ export function useThumbnailGenerator(pageId: string | null) {
     }
   }, [pageId, pages]);
 
-  // Generate thumbnail when page is inactive (500ms after last change)
+  // Generate thumbnail 2s after last page change (debounced)
+  // Note: we use a longer delay to avoid re-triggering on the thumbnail update itself
   useEffect(() => {
-    const timer = setTimeout(generate, 500);
+    const timer = setTimeout(generate, 2000);
     return () => clearTimeout(timer);
   }, [generate]);
 }

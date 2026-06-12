@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { nanoid } from 'nanoid';
+import { deleteNotebook as dbDeleteNotebook, deletePage as dbDeletePage, saveNotebook as dbSaveNotebook, savePage as dbSavePage } from '@/lib/storage/db';
 import type {
   ToolType,
   StrokeStyle,
@@ -223,7 +224,7 @@ export const useAppStore = create<AppState & AppActions>()(
         s.notebooks[notebook.id] = notebook;
         s.activeNotebookId = notebook.id;
       });
-      // Auto-create first page
+      dbSaveNotebook(notebook).catch((e) => console.error('[Store] Failed to save new notebook', e));
       get().createPage(notebook.id);
       return notebook;
     },
@@ -234,18 +235,21 @@ export const useAppStore = create<AppState & AppActions>()(
       }
     }),
 
-    deleteNotebook: (id) => set((s) => {
-      const nb = s.notebooks[id];
-      if (nb) {
-        nb.pageIds.forEach((pid) => { delete s.pages[pid]; });
-        delete s.notebooks[id];
-        if (s.activeNotebookId === id) {
-          const ids = Object.keys(s.notebooks);
-          s.activeNotebookId = ids[0] ?? null;
-          s.activePageId = ids[0] ? s.notebooks[ids[0]].pageIds[0] ?? null : null;
+    deleteNotebook: (id) => {
+      set((s) => {
+        const nb = s.notebooks[id];
+        if (nb) {
+          nb.pageIds.forEach((pid) => { delete s.pages[pid]; });
+          delete s.notebooks[id];
+          if (s.activeNotebookId === id) {
+            const ids = Object.keys(s.notebooks);
+            s.activeNotebookId = ids[0] ?? null;
+            s.activePageId = ids[0] ? s.notebooks[ids[0]].pageIds[0] ?? null : null;
+          }
         }
-      }
-    }),
+      });
+      dbDeleteNotebook(id).catch((e) => console.error('[Store] Failed to delete notebook from DB', e));
+    },
 
     setActiveNotebook: (id) => set((s) => {
       s.activeNotebookId = id;
@@ -283,6 +287,9 @@ export const useAppStore = create<AppState & AppActions>()(
         }
         s.activePageId = page.id;
       });
+      dbSavePage(page).catch((e) => console.error('[Store] Failed to save new page', e));
+      const nb = get().notebooks[notebookId];
+      if (nb) dbSaveNotebook(nb).catch((e) => console.error('[Store] Failed to update notebook after createPage', e));
       return page;
     },
 
@@ -292,18 +299,22 @@ export const useAppStore = create<AppState & AppActions>()(
       }
     }),
 
-    deletePage: (id) => set((s) => {
-      const page = s.pages[id];
-      if (!page) return;
-      const nb = s.notebooks[page.notebookId];
-      if (nb) {
-        nb.pageIds = nb.pageIds.filter((pid) => pid !== id);
-      }
-      delete s.pages[id];
-      if (s.activePageId === id) {
-        s.activePageId = nb?.pageIds[0] ?? null;
-      }
-    }),
+    deletePage: (id) => {
+      set((s) => {
+        const page = s.pages[id];
+        if (!page) return;
+        const nb = s.notebooks[page.notebookId];
+        if (nb) {
+          nb.pageIds = nb.pageIds.filter((pid) => pid !== id);
+          nb.updatedAt = Date.now();
+        }
+        delete s.pages[id];
+        if (s.activePageId === id) {
+          s.activePageId = nb?.pageIds[0] ?? null;
+        }
+      });
+      dbDeletePage(id).catch((e) => console.error('[Store] Failed to delete page from DB', e));
+    },
 
     setActivePage: (id) => set((s) => {
       s.activePageId = id;
@@ -311,18 +322,23 @@ export const useAppStore = create<AppState & AppActions>()(
       s.transform = { x: 0, y: 0, scale: 1 };
     }),
 
-    reorderPages: (notebookId, pageIds) => set((s) => {
-      if (s.notebooks[notebookId]) {
-        s.notebooks[notebookId].pageIds = pageIds;
-        pageIds.forEach((pid, i) => {
-          if (s.pages[pid]) s.pages[pid].order = i;
-        });
-      }
-    }),
+    reorderPages: (notebookId, pageIds) => {
+      set((s) => {
+        if (s.notebooks[notebookId]) {
+          s.notebooks[notebookId].pageIds = pageIds;
+          s.notebooks[notebookId].updatedAt = Date.now();
+          pageIds.forEach((pid, i) => {
+            if (s.pages[pid]) s.pages[pid].order = i;
+          });
+        }
+      });
+      const nb = get().notebooks[notebookId];
+      if (nb) dbSaveNotebook(nb).catch((e) => console.error('[Store] Failed to save notebook after reorder', e));
+    },
 
     // Elements
+    // Fix #3: addElement does NOT push history — callers do it explicitly before calling
     addElement: (pageId, element) => {
-      get().pushHistory('add element');
       set((s) => {
         if (s.pages[pageId]) {
           s.pages[pageId].elements.push(element);
@@ -341,6 +357,7 @@ export const useAppStore = create<AppState & AppActions>()(
       }
     }),
 
+    // Fix #3: deleteElements pushes history before removing — consistent with addElement callers
     deleteElements: (pageId, elementIds) => {
       get().pushHistory('delete elements');
       set((s) => {
@@ -359,7 +376,6 @@ export const useAppStore = create<AppState & AppActions>()(
       s.pages[pageId].elements.forEach((el) => {
         if (!ids.has(el.id)) return;
         if (el.type === 'stroke') {
-          // Move stroke points
           el.points = el.points.map(([x, y, p]) => [x + dx, y + dy, p ?? 0.5]);
           el.bounds = { ...el.bounds, x: el.bounds.x + dx, y: el.bounds.y + dy };
         } else if ('x' in el) {
@@ -377,20 +393,20 @@ export const useAppStore = create<AppState & AppActions>()(
         elements: JSON.parse(JSON.stringify(s.pages[pageId].elements)),
         description,
       };
-      // Trim future if we undid then did something
       s.historyStack = s.historyStack.slice(0, s.historyIndex + 1);
       s.historyStack.push(snapshot);
-      // Keep max 100 history entries
       if (s.historyStack.length > 100) s.historyStack.shift();
       s.historyIndex = s.historyStack.length - 1;
     }),
 
     undo: () => set((s) => {
-      if (s.historyIndex <= 0 || !s.activePageId) return;
+      if (s.historyIndex < 0 || !s.activePageId) return;
       s.historyIndex -= 1;
-      const snapshot = s.historyStack[s.historyIndex];
-      if (snapshot && s.pages[s.activePageId]) {
-        s.pages[s.activePageId].elements = JSON.parse(JSON.stringify(snapshot.elements));
+      const snapshot = s.historyIndex >= 0 ? s.historyStack[s.historyIndex] : null;
+      if (s.pages[s.activePageId]) {
+        s.pages[s.activePageId].elements = snapshot
+          ? JSON.parse(JSON.stringify(snapshot.elements))
+          : [];
       }
     }),
 
@@ -471,5 +487,5 @@ export const useActiveNotebook = () => {
   return activeNotebookId ? notebooks[activeNotebookId] : null;
 };
 
-export const useCanUndo = () => useAppStore((s) => s.historyIndex > 0);
+export const useCanUndo = () => useAppStore((s) => s.historyIndex >= 0);
 export const useCanRedo = () => useAppStore((s) => s.historyIndex < s.historyStack.length - 1);

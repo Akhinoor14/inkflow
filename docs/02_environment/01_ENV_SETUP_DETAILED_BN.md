@@ -5,7 +5,7 @@
 
 ## Overview: কোনো variables লাগবে?
 
-InkFlow app চলতে পারে তিন level এ:
+Foylx Note app চলতে পারে তিন level এ:
 
 | Level | Required Vars | Status |
 |---|---|---|
@@ -40,7 +40,7 @@ NEXTAUTH_SECRET=abc123def456...
 ### কী এটা?
 App যেখানে host থাকবে, সেই website URL।
 - **Local development:** `http://localhost:3000`
-- **Vercel production:** `https://tumarbag-inkflow.vercel.app`
+- **Vercel production:** `https://tumarbag-foylx-note.vercel.app`
 
 ### status:
 ✅ `.env.local` এ local URL ইতিমধ্যে আছে।
@@ -76,7 +76,7 @@ Google Drive Sync feature চাইলে।
 1. Top-left corner এ "Select a project" বাক্স দেখবে
 2. সেখানে click করো
 3. "NEW PROJECT" button পাবে
-4. Project name দাও: **InkFlow Studio**
+4. Project name দাও: **Foylx Note Studio**
 5. "CREATE" click করো
 6. 2-3 মিনিট wait করো (project তৈরি হচ্ছে)
 
@@ -103,7 +103,7 @@ Google Drive Sync feature চাইলে।
 এখানে তোমার app info দিতে হবে:
 
 1. **User Type:** "External" select করো
-2. **App name:** দাও `InkFlow Studio`
+2. **App name:** দাও `Foylx Note Studio`
 3. **User support email:** তোমার email দাও
 4. "SAVE AND CONTINUE" click করো
 
@@ -122,12 +122,12 @@ Google Drive Sync feature চাইলে।
 
 এখানে:
 1. **Application type:** "Web application" select করো
-2. **Name:** দাও `InkFlow Web`
+2. **Name:** দাও `Foylx Note Web`
 3. **Authorized redirect URIs** section এ:
    - এই 2টা URL add করো:
    ```
    http://localhost:3000/api/auth/callback/google
-   https://tumarbag-inkflow.vercel.app/api/auth/callback/google
+   https://tumarbag-foylx-note.vercel.app/api/auth/callback/google
    ```
    (Vercel domain-এ তোমার actual domain থাকবে)
 
@@ -180,7 +180,7 @@ License system চলাতে।
 
 #### Step 2: নতুন project
 1. Dashboard এ "New Project" button click করো
-2. **Project name:** `inkflow-studio` দাও
+2. **Project name:** `foylx-note-studio` দাও
 3. **Database Password:** একটা strong password দাও (random generate করে সেট করো)
 4. **Region:** যেখানে তুমি আছো তার কাছাকাছি select করো (or default ok)
 5. "Create new project" click করো
@@ -261,7 +261,7 @@ NEXT_PUBLIC_MYSCRIPT_KEY=
 ### Step 3: Deploy
 1. "Deploy" button click করো
 2. Vercel automatically build + deploy করবে
-3. Public URL পাবে (যেমন: `https://inkflow-studio-abc123.vercel.app`)
+3. Public URL পাবে (যেমন: `https://foylx-note-studio-abc123.vercel.app`)
 
 ### Step 4: Update Google Consent Screen
 1. Google Cloud Console এ ফিরে যাও

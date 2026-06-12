@@ -121,7 +121,7 @@ ipcMain.handle('write-file', async (_, { filePath, data, encoding }) => {
 // Tamper-detection sentinel — inject into renderer
 app.on('web-contents-created', (_, contents) => {
   contents.on('did-finish-load', () => {
-    contents.executeJavaScript(`window.__ELECTRON__ = true; window.__INKFLOW_SENTINEL__ = 'authentic';`);
+    contents.executeJavaScript(`window.__ELECTRON__ = true; window.__FOYLX_NOTE_SENTINEL__ = 'authentic';`);
   });
 });
 

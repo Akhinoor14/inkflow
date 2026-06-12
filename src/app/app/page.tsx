@@ -130,7 +130,11 @@ function Editor() {
 
     setIsActivating(true);
     try {
-      await activateLicense(licenseKey, licenseEmail);
+      const result = await activateLicense(licenseKey, licenseEmail);
+      if (!result.success) {
+        setActivationError(mapActivationError(result.error ?? t.license.errors.generalError));
+        return;
+      }
       setActivationSuccess(t.license.success);
       const status = await checkLicense();
       setLicenseStatus(status);

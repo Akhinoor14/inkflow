@@ -15,7 +15,10 @@ export function scheduleSave(pageId?: string, notebookId?: string) {
 
   if (saveTimer) clearTimeout(saveTimer);
 
-  const interval = useAppStore.getState().preferences.autoSaveInterval * 1000;
+  const { preferences } = useAppStore.getState();
+  // Respect the autoSave toggle — but always allow manual flushSaves()
+  if (!preferences.autoSave) return;
+  const interval = preferences.autoSaveInterval * 1000;
 
   saveTimer = setTimeout(async () => {
     await flushSaves();

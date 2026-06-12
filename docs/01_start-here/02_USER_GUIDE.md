@@ -1,11 +1,11 @@
-# InkFlow Studio — User Guide
+# Foylx Note Studio — User Guide
 **বিসমিল্লাহির রাহমানির রাহীম**
 
 ---
 
-## 🖊 What is InkFlow Studio?
+## 🖊 What is Foylx Note Studio?
 
-InkFlow Studio is a **local-first digital notebook** — meaning your notes are stored on your own device, never uploaded to any server unless you choose to sync. It works offline, completely free.
+Foylx Note Studio is a **local-first digital notebook** — meaning your notes are stored on your own device, never uploaded to any server unless you choose to sync. It works offline, completely free.
 
 **Key features:**
 - Pressure-sensitive handwriting (like real pen on paper)
@@ -20,9 +20,9 @@ InkFlow Studio is a **local-first digital notebook** — meaning your notes are 
 ## 🚀 Getting Started
 
 ### Open the App
-- **Web:** Go to your hosted URL (e.g. `https://inkflow.vercel.app`)
-- **Desktop:** Double-click `InkFlow Studio` on your desktop
-- **Android:** Tap the InkFlow icon
+- **Web:** Go to your hosted URL (e.g. `https://foylx-note.vercel.app`)
+- **Desktop:** Double-click `Foylx Note Studio` on your desktop
+- **Android:** Tap the Foylx Note icon
 
 ### First Launch
 The app creates a default notebook automatically. You'll see:
@@ -230,10 +230,10 @@ You can export **current page** or the **entire notebook** (all pages).
 Click **Drive** in the sidebar Apps section.
 
 1. Click **Connect Google Drive**
-2. Sign in with Google (only accesses the "InkFlow Studio" folder)
+2. Sign in with Google (only accesses the "Foylx Note Studio" folder)
 3. Click **Sync Now** to upload your notebook
 
-Your notes are stored in `Google Drive → InkFlow Studio → [Notebook Name]` as JSON files.
+Your notes are stored in `Google Drive → Foylx Note Studio → [Notebook Name]` as JSON files.
 
 If you edit on two devices, the app detects **conflicts** and lets you choose which version to keep (per page).
 

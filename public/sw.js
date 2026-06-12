@@ -1,5 +1,5 @@
 // public/sw.js — Foylx Note Service Worker
-const CACHE = 'foylx-v2';
+const CACHE = 'foylx-note-v2';
 const STATIC = ['/', '/manifest.json'];
 
 self.addEventListener('install', e => {

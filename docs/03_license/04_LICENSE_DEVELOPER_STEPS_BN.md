@@ -1,4 +1,4 @@
-# InkFlow License - Developer Steps
+# Foylx Note License - Developer Steps
 
 এই file developer/admin-এর জন্য।
 

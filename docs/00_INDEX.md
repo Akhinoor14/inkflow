@@ -1,4 +1,4 @@
-# InkFlow Docs Index
+# Foylx Note Docs Index
 
 এই index file থেকে সব guide এক জায়গায় খুলতে পারবে।
 

@@ -10,7 +10,20 @@ import { loadPreferences, getAllNotebooks, getPagesForNotebook } from '@/lib/sto
 export function Providers({ children }: { children: React.ReactNode }) {
   const { isDarkMode, updatePreferences, loadNotebooks, loadPages, setAuthLoading } = useAppStore();
 
-  // Apply dark mode class
+  // Apply dark mode class — also sync with system preference on first render
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const { preferences, isDarkMode: storeDark } = useAppStore.getState();
+    const shouldBeDark = preferences.theme === 'dark' || (preferences.theme === 'system' && prefersDark) || storeDark;
+    if (shouldBeDark) {
+      document.documentElement.classList.add('dark');
+      if (!storeDark) useAppStore.getState().toggleDarkMode();
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []); // run once on mount
+
+  // Keep in sync with store changes
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -27,8 +40,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
         const prefs = await loadPreferences();
         if (prefs) updatePreferences(prefs);
 
-        // Load notebooks
-        const notebooks = await getAllNotebooks('local');
+        // Bug #7 fix: load notebooks for the authenticated user (or 'local' for guests)
+        const store = useAppStore.getState();
+        const userId = store.user?.id ?? 'local';
+        const notebooks = await getAllNotebooks(userId);
         if (notebooks.length > 0) {
           loadNotebooks(notebooks);
 
@@ -39,7 +54,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           loadPages(allPages.flat());
 
           // Set active notebook/page
-          const store = useAppStore.getState();
           if (!store.activeNotebookId && notebooks[0]) {
             store.setActiveNotebook(notebooks[0].id);
           }

@@ -45,7 +45,7 @@ export function DriveModal({ onClose }: Props) {
         if (page.driveFileId) {
           const s = await checkForConflicts(page);
           if (s === 'remote-newer') {
-            foundConflicts.push({ pageId: page.id, pageTitle: page.title || 'Untitled', localTime: page.updatedAt, remoteTime: Date.now() });
+            foundConflicts.push({ pageId: page.id, pageTitle: page.title || 'Untitled', localTime: page.updatedAt, remoteTime: Date.now() }); // Note: remoteTime is approximate; exact time requires Drive file metadata
           }
         }
       }
@@ -70,7 +70,9 @@ export function DriveModal({ onClose }: Props) {
           const remotePgs = await loadPagesFromDrive(activeNotebook.driveFolderId ?? '');
           const remotePg = remotePgs.find((p) => p.id === conflict.pageId);
           if (remotePg) { await savePage(remotePg); }
-        } catch {}
+        } catch (e) {
+          console.error('[DriveModal] Failed to apply remote page', conflict.pageId, e);
+        }
       }
     }
     const notebookPages = activeNotebook.pageIds.map((pid) => pages[pid]).filter(Boolean);

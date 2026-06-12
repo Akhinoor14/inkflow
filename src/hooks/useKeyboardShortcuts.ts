@@ -7,10 +7,10 @@ import { useAppStore } from '@/store/useAppStore';
 import { flushSaves } from '@/lib/storage/autoSave';
 
 export function useKeyboardShortcuts() {
-  const store = useAppStore();
-
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      // Always read fresh state — never close over stale store snapshot
+      const store = useAppStore.getState();
       const ctrl = e.ctrlKey || e.metaKey;
 
       // Save
@@ -31,7 +31,8 @@ export function useKeyboardShortcuts() {
       // Delete selected
       if ((e.key === 'Delete' || e.key === 'Backspace') && store.selection.selectedIds.length > 0) {
         // Don't interfere with text inputs
-        if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') return;
+        const tag = (e.target as HTMLElement).tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return;
         e.preventDefault();
         const { activePageId, selection } = store;
         if (activePageId) store.deleteElements(activePageId, selection.selectedIds);
@@ -53,6 +54,13 @@ export function useKeyboardShortcuts() {
         return;
       }
 
+      // Toggle sidebar
+      if (ctrl && e.key === '\\') {
+        e.preventDefault();
+        store.toggleSidebar();
+        return;
+      }
+
       // Zoom reset
       if (ctrl && e.key === '0') {
         e.preventDefault();
@@ -60,17 +68,31 @@ export function useKeyboardShortcuts() {
         return;
       }
 
-      // Tool shortcuts (skip if typing in input)
-      if ((e.target as HTMLElement).tagName === 'INPUT' || (e.target as HTMLElement).tagName === 'TEXTAREA') return;
-      const toolMap: Record<string,string> = {
-        p:'pen', h:'highlighter', e:'eraser', s:'select', t:'text', l:'lasso', v:'pan', q:'shape',
-      };
-      if (!ctrl && !e.shiftKey && e.key.length===1 && toolMap[e.key.toLowerCase()]) {
-        store.setActiveTool(toolMap[e.key.toLowerCase()] as any);
+      // Zoom in/out via keyboard
+      if (ctrl && (e.key === '=' || e.key === '+')) {
+        e.preventDefault();
+        store.zoomTo(store.transform.scale * 1.25);
+        return;
+      }
+      if (ctrl && e.key === '-') {
+        e.preventDefault();
+        store.zoomTo(store.transform.scale / 1.25);
+        return;
+      }
+
+      // Tool shortcuts — skip if typing in input
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement).isContentEditable) return;
+
+      // NOTE: p/e/v/t/h/l are handled by useHotkeys in MainToolbar.
+      // Only handle undo/redo here to avoid double-firing (Bug #8 fix).
+      if (ctrl && e.key === 'z' && !e.shiftKey) { e.preventDefault(); store.undo(); return; }
+      if ((ctrl && e.key === 'y') || (ctrl && e.shiftKey && e.key === 'z')) {
+        e.preventDefault(); store.redo(); return;
       }
     };
 
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []); // eslint-disable-line
+  }, []); // intentionally empty — handler always reads fresh state via getState()
 }

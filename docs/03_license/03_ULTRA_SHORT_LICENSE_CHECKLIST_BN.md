@@ -1,4 +1,4 @@
-# InkFlow License - Ultra Short Checklist
+# Foylx Note License - Ultra Short Checklist
 
 ## যা already done
 1. License system app-এ connect করা আছে

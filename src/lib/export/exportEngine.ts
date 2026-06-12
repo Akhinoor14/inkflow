@@ -52,7 +52,7 @@ export async function exportToPDF(
     }
   }
 
-  const filename = options.filename ?? 'foylx-export';
+  const filename = options.filename ?? 'foylx-note-export';
   pdf.save(`${filename}.pdf`);
 }
 
@@ -123,13 +123,15 @@ export async function exportToDOCX(
       }
     }
 
-    // Page break between pages
-    children.push(new Paragraph({ pageBreakBefore: true }));
+    // Page break between pages (not after the last page)
+    if (pages.indexOf(page) < pages.length - 1) {
+      children.push(new Paragraph({ pageBreakBefore: true }));
+    }
   }
 
   const doc = new Document({ sections: [{ children }] });
   const blob = await Packer.toBlob(doc);
-  downloadBlob(blob, `${options.filename ?? 'foylx-export'}.docx`);
+  downloadBlob(blob, `${options.filename ?? 'foylx-note-export'}.docx`);
 }
 
 /**
@@ -137,7 +139,7 @@ export async function exportToDOCX(
  */
 export async function exportToPNG(
   svgElement: SVGSVGElement,
-  filename: string = 'foylx-export'
+  filename: string = 'foylx-note-export'
 ): Promise<void> {
   const serializer = new XMLSerializer();
   const svgStr = serializer.serializeToString(svgElement);
@@ -159,6 +161,8 @@ export async function exportToPNG(
       if (pngBlob) downloadBlob(pngBlob, `${filename}.png`);
     }, 'image/png');
   };
+  // Bug #12 fix: also revoke URL on error to prevent memory leak
+  img.onerror = () => URL.revokeObjectURL(url);
   img.src = url;
 }
 

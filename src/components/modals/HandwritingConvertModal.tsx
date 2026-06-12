@@ -91,7 +91,7 @@ export function HandwritingConvertModal({ strokes, pageId, notebookId, settings,
             <div className="flex flex-col items-center py-6 gap-3">
               <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
               <p className="text-sm text-gray-500">
-                {settings.language === 'ben' ? 'বাংলা পাঠ করা হচ্ছে...' : 'Recognizing handwriting...'}
+                {(settings.language === 'ben' || settings.language === 'eng+ben') ? 'বাংলা পাঠ করা হচ্ছে...' : 'Recognizing handwriting...'}
               </p>
             </div>
           )}

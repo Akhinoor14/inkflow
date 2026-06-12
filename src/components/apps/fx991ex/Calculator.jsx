@@ -17,6 +17,7 @@ import DistributionMode from './ModeScreens/DistributionMode.jsx'
 import EquationMode from './ModeScreens/EquationMode.jsx'
 import SpreadsheetMode from './ModeScreens/SpreadsheetMode.jsx'
 import { TableMode, RatioMode } from './ModeScreens/TableRatioMode.jsx'
+import EngineeringMode from './ModeScreens/EngineeringMode.jsx'
 import EngineerConverter from './ExtraConversion/EngineerConvert.jsx'
 import ConstantsPanel from './ExtraConversion/ConstantsPanel.jsx'
 
@@ -89,7 +90,7 @@ function applyFormat(val, fmt) {
 function Overlay({ children, onClose }) {
   return (
     <div className="conv-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div style={{background:'#1c1c1e',border:'1px solid #3a3a3c',borderRadius:'10px',
+      <div style={{background:'#f0ece6',border:'1px solid #c0bab2',borderRadius:'10px',
                    padding:'16px',width:'280px',maxHeight:'80vh',overflowY:'auto',
                    boxShadow:'0 0 50px rgba(0,0,0,0.95)'}}>
         {children}
@@ -116,11 +117,11 @@ const dlgRow = (label, val, set, opts={}) => (
 
 function ResultBox({ label, value, color='#5adf5a' }) {
   return (
-    <div style={{background:`rgba(${color==='#5adf5a'?'90,223,90':'90,143,208'},0.08)`,
-                 border:`1px solid rgba(${color==='#5adf5a'?'90,223,90':'90,143,208'},0.3)`,
+    <div style={{background:`rgba(${color==='#5adf5a'?'40,140,40':'40,100,200'},0.08)`,
+                 border:`1px solid rgba(${color==='#5adf5a'?'40,140,40':'40,100,200'},0.25)`,
                  borderRadius:'4px',padding:'8px 12px',textAlign:'right',marginTop:'6px'}}>
       {label && <div style={{fontFamily:'var(--font-display)',fontSize:'9px',color:'#777',marginBottom:'2px'}}>{label}</div>}
-      <div style={{fontFamily:'var(--font-display)',fontSize:'20px',color,fontWeight:'bold'}}>{value}</div>
+      <div style={{fontFamily:'var(--font-display)',fontSize:'20px',color:'#1a1a18',fontWeight:'bold'}}>{value}</div>
     </div>
   )
 }
@@ -355,7 +356,7 @@ function SetupPanel({ dispFormat, onFormat, onClose }) {
 function HistoryPanel({ history, onSelect, onClose }) {
   return (
     <div className="conv-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
-      <div style={{background:'#1c1c1e',border:'1px solid #3a3a3c',borderRadius:'10px',padding:'16px',width:'300px',maxHeight:'65vh',display:'flex',flexDirection:'column',boxShadow:'0 0 50px rgba(0,0,0,0.95)'}}>
+      <div style={{background:'#f0ece6',border:'1px solid #c0bab2',borderRadius:'10px',padding:'16px',width:'300px',maxHeight:'65vh',display:'flex',flexDirection:'column',boxShadow:'0 0 50px rgba(0,0,0,0.95)'}}>
         {dlgTitle('⟳  HISTORY', '#a0c0a0')}
         <div style={{overflowY:'auto',flex:1}}>
           {history.length === 0
@@ -363,10 +364,10 @@ function HistoryPanel({ history, onSelect, onClose }) {
             : [...history].reverse().map((h,i)=>(
               <div key={i} onClick={()=>{ onSelect(h.expr, h.result); onClose() }}
                 style={{padding:'8px 10px',borderBottom:'1px solid #252525',cursor:'pointer',borderRadius:'4px'}}
-                onMouseEnter={e=>e.currentTarget.style.background='rgba(255,255,255,0.05)'}
+                onMouseEnter={e=>e.currentTarget.style.background='rgba(0,0,0,0.05)'}
                 onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                <div style={{fontFamily:'var(--font-display)',fontSize:'10px',color:'#b0b0b0',wordBreak:'break-all'}}>{h.expr}</div>
-                <div style={{fontFamily:'var(--font-display)',fontSize:'14px',color:'#5adf5a',textAlign:'right',marginTop:'2px'}}>{h.result}</div>
+                <div style={{fontFamily:'var(--font-display)',fontSize:'10px',color:'#4a4840',wordBreak:'break-all'}}>{h.expr}</div>
+                <div style={{fontFamily:'var(--font-display)',fontSize:'14px',color:'#1a6a1a',textAlign:'right',marginTop:'2px'}}>{h.result}</div>
               </div>
             ))
           }
@@ -542,6 +543,7 @@ export default function Calculator() {
       case 'SHEET':  return <SpreadsheetMode />
       case 'TABLE':  return <TableMode />
       case 'RATIO':  return <RatioMode />
+      case 'ENG':    return <EngineeringMode />
       default:       return null
     }
   }

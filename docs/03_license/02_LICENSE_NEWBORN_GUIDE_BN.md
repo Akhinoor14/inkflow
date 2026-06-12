@@ -1,4 +1,4 @@
-# InkFlow License System - Complete Newborn Guide (Bangla)
+# Foylx Note License System - Complete Newborn Guide (Bangla)
 
 এই গাইড এমনভাবে লেখা যে একদম নতুন কেউও শুরু থেকে শেষ পর্যন্ত license system চালু করতে পারে।
 
@@ -70,7 +70,7 @@ So, user account খুলবে কিভাবে?
 1. যাও: https://supabase.com
 2. Login
 3. New Project
-4. Project name: inkflow-studio
+4. Project name: foylx-note-studio
 5. Database password set করো
 6. Region choose করো
 7. Create Project
@@ -244,7 +244,7 @@ Recommended mapping:
 7. success -> লাইসেন্স সফলভাবে অ্যাক্টিভেট হয়েছে
 
 UI label suggestion:
-1. Activate InkFlow -> লাইসেন্স অ্যাক্টিভেশন
+1. Activate Foylx Note -> লাইসেন্স অ্যাক্টিভেশন
 2. Email -> আপনার ইমেইল
 3. License Key -> লাইসেন্স কী
 4. Activate License -> এখনই অ্যাক্টিভেট করুন
@@ -292,11 +292,11 @@ Recommended practical flow:
 
 Email template example:
 
-Subject: Your InkFlow License Key
+Subject: Your Foylx Note License Key
 
 Hello,
 Thanks for your purchase.
-Use the details below to activate InkFlow:
+Use the details below to activate Foylx Note:
 - Email: a3kmstudio@gmail.com
 - License Key: INKF-XXXX-XXXX-XXXX
 - App URL: https://foylx.vercel.app

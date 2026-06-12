@@ -57,9 +57,9 @@ function countCorners(pts: Point[], angleThreshold=45): number {
 
 /** Check if stroke looks like an arrow (line with V at end) */
 function arrowScore(pts: Point[]): number {
-  // Arrow: mostly straight, but has a fork/hook at the end
+  // Arrow: mostly straight shaft, but NOT perfectly straight (has arrowhead)
   const s = straightness(pts);
-  if(s>0.85) return 0; // too straight = line
+  if(s < 0.55) return 0; // Bug #15 fix: too curvy = not an arrow (was s > 0.85 which was inverted)
   const mainLen = pathLen(pts);
   // Check if last 20% of stroke diverges (arrowhead)
   const splitIdx = Math.floor(pts.length*0.75);

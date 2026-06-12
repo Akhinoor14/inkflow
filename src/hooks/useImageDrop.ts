@@ -8,10 +8,12 @@ import type { ImageElement } from '@/types';
 
 export function useImageDrop(containerRef: React.RefObject<HTMLElement>) {
   const activePage = useActivePage();
-  const { addElement, transform } = useAppStore();
+  const { addElement } = useAppStore();
 
   const handleFile = useCallback(async (file: File, dropX: number, dropY: number) => {
     if (!activePage || !file.type.startsWith('image/')) return;
+    // Bug #11 fix: read transform from store at event time, not from stale closure
+    const transform = useAppStore.getState().transform;
 
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -46,7 +48,7 @@ export function useImageDrop(containerRef: React.RefObject<HTMLElement>) {
       img.src = src;
     };
     reader.readAsDataURL(file);
-  }, [activePage, addElement, transform, containerRef]);
+  }, [activePage, addElement, containerRef]);
 
   useEffect(() => {
     const el = containerRef.current;

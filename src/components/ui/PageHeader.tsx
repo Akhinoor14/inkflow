@@ -8,7 +8,7 @@ import { BackgroundPicker } from './BackgroundPicker';
 import { ExportMenu } from './ExportMenu';
 
 export function PageHeader() {
-  const { toggleSidebar, isSidebarOpen, isRecordingAudio, setIsRecordingAudio } = useAppStore();
+  const { toggleSidebar, isSidebarOpen, isRecordingAudio, setIsRecordingAudio, updatePage } = useAppStore();
   const activePage = useActivePage();
   const activeNotebook = useActiveNotebook();
   const [showBgPicker, setShowBgPicker] = useState(false);
@@ -34,7 +34,7 @@ export function PageHeader() {
         <input
           type="text"
           value={activePage.title}
-          onChange={(e) => useAppStore.getState().updatePage(activePage.id, { title: e.target.value })}
+          onChange={(e) => updatePage(activePage.id, { title: e.target.value })}
           className="font-medium text-gray-800 dark:text-gray-200 bg-transparent border-none outline-none focus:bg-gray-50 dark:focus:bg-gray-700 px-1 rounded min-w-[80px] max-w-[160px]"
           placeholder="Untitled"
         />

@@ -1,6 +1,7 @@
 'use client';
 // src/components/ui/AudioSyncPanel.tsx
 // Recording waveform + click-to-play audio markers on canvas
+// FIXED: mic stream track stop on unmount/stop, AudioContext ref + close on stop
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useAppStore, useActivePage } from '@/store/useAppStore';
@@ -18,11 +19,14 @@ export function AudioSyncPanel() {
   const [currentTime, setCurrentTime] = useState(0);
   const [elapsed, setElapsed] = useState(0);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const waveformRef = useRef<HTMLCanvasElement>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
+  const audioRef     = useRef<HTMLAudioElement | null>(null);
+  const timerRef     = useRef<ReturnType<typeof setInterval> | null>(null);
+  const waveformRef  = useRef<HTMLCanvasElement>(null);
+  const analyserRef  = useRef<AnalyserNode | null>(null);
   const animFrameRef = useRef<number>(0);
+  // FIX: keep refs to stream + AudioContext so we can close them properly
+  const streamRef    = useRef<MediaStream | null>(null);
+  const audioCtxRef  = useRef<AudioContext | null>(null);
 
   // Load existing recording for page
   useEffect(() => {
@@ -31,6 +35,23 @@ export function AudioSyncPanel() {
       if (rec) setRecording(rec);
     });
   }, [activePage]);
+
+  // FIX: cleanup mic + AudioContext on unmount (handles panel close mid-recording)
+  useEffect(() => {
+    return () => {
+      cancelAnimationFrame(animFrameRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
+      // Stop all mic tracks so browser mic indicator goes away
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
+      // Close AudioContext to free browser audio resources
+      audioCtxRef.current?.close();
+      audioCtxRef.current = null;
+      analyserRef.current = null;
+      audioRef.current?.pause();
+      audioRef.current = null;
+    };
+  }, []);
 
   // Waveform animation while recording
   const drawWaveform = useCallback(() => {
@@ -66,9 +87,12 @@ export function AudioSyncPanel() {
   const handleStartRecording = async () => {
     if (!activePage) return;
     try {
-      // Setup audio analyser for waveform
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const audioCtx = new AudioContext();
+      // FIX: store both refs so stop/unmount can clean up properly
+      streamRef.current   = stream;
+      audioCtxRef.current = audioCtx;
+
       const source = audioCtx.createMediaStreamSource(stream);
       const analyser = audioCtx.createAnalyser();
       analyser.fftSize = 256;
@@ -90,6 +114,12 @@ export function AudioSyncPanel() {
     if (timerRef.current) clearInterval(timerRef.current);
     cancelAnimationFrame(animFrameRef.current);
     analyserRef.current = null;
+
+    // FIX: stop mic tracks and close AudioContext on every explicit stop
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+    audioCtxRef.current?.close();
+    audioCtxRef.current = null;
 
     const rec = await stopRecording(activePage.id);
     if (rec) setRecording(rec);
@@ -154,7 +184,6 @@ export function AudioSyncPanel() {
             {isPlaying ? 'Pause' : 'Play'}
           </button>
 
-          {/* Progress bar */}
           <div className="flex-1 max-w-[160px] h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-blue-500 rounded-full transition-all"

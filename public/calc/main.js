@@ -1,6 +1,6 @@
 // calc/main.js
 // ════════════════════════════════════════════════════════════
-//  INKFLOW CALCULATOR — MASTER ENGINE
+//  FOYLX_NOTE CALCULATOR — MASTER ENGINE
 //  Connects all modules into a single unified expression parser
 //  Supports: standard math, engineering functions, unit conversion,
 //            constants, matrix/complex/stats/financial shortcuts
