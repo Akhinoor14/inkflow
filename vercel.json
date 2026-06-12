@@ -1,5 +1,1 @@
-{
-  "env": {
-    "NEXTAUTH_URL": "@nextauth_url"
-  }
-}
+{}
